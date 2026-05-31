@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>edu-lab · Worksheet Generator</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="themes.css">
+<link rel="stylesheet" href="stem.css">
+</head>
+<body>
+<div class="app">
+  <!-- ============ CONTROL PANEL ============ -->
+  <aside class="controls no-print" id="controls">
+    <h1>edu-lab</h1>
+    <p class="sub">Worksheet generator · Grades K&ndash;5</p>
+
+    <label class="field">
+      <span>Subject</span>
+      <select id="subject">
+        <option value="math">Math</option>
+        <option value="la">Language Arts</option>
+        <option value="reading">Reading</option>
+        <option value="stem">STEM</option>
+      </select>
+    </label>
+
+    <label class="field">
+      <span>Worksheet type</span>
+      <select id="type"><!-- populated by app.js based on subject + grade --></select>
+    </label>
+
+    <div class="row">
+      <label class="field">
+        <span>Starting grade</span>
+        <select id="grade">
+          <option value="0">Kindergarten</option>
+          <option value="1">Grade 1</option>
+          <option value="2">Grade 2</option>
+          <option value="3" selected>Grade 3</option>
+          <option value="4">Grade 4</option>
+          <option value="5">Grade 5</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Difficulty</span>
+        <select id="difficulty">
+          <option value="easy">Easy</option>
+          <option value="medium" selected>Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </label>
+    </div>
+
+    <label class="field" id="digitField">
+      <span>Digit format (operands)</span>
+      <select id="digits">
+        <option value="1x1">1 &times; 1</option>
+        <option value="1x2">1 &times; 2</option>
+        <option value="1x3">1 &times; 3</option>
+        <option value="2x2" selected>2 &times; 2</option>
+        <option value="2x3">2 &times; 3</option>
+        <option value="3x3">3 &times; 3</option>
+      </select>
+    </label>
+
+    <label class="field">
+      <span>Problems per page</span>
+      <input type="number" id="count" min="1" max="120" value="48">
+      <small id="countHint">Default 48 for basic arithmetic.</small>
+    </label>
+
+    <div class="row">
+      <label class="field grow">
+        <span>Seed (optional)</span>
+        <input type="text" id="seed" placeholder="blank = random">
+      </label>
+      <label class="field check">
+        <span>Answer key</span>
+        <input type="checkbox" id="answerKey">
+      </label>
+    </div>
+
+    <div class="row">
+      <label class="field grow">
+        <span>Fun theme</span>
+        <select id="theme"><!-- populated from THEMES.list --></select>
+      </label>
+      <label class="field check">
+        <span>Decorate</span>
+        <input type="checkbox" id="themeOn">
+      </label>
+    </div>
+
+    <details class="field">
+      <summary>Header options</summary>
+      <label class="subfield"><span>Title</span>
+        <input type="text" id="title" placeholder="auto from type"></label>
+      <label class="subfield check2"><span>Name &amp; date line</span>
+        <input type="checkbox" id="showName" checked></label>
+    </details>
+
+    <div class="actions">
+      <button id="generate" class="primary">Generate</button>
+      <button id="print">Print</button>
+    </div>
+    <p class="seedinfo" id="seedInfo"></p>
+    <p class="tip no-print">Tip: same seed + same settings = identical sheet, so a key always matches.</p>
+  </aside>
+
+  <!-- ============ WORKSHEET OUTPUT ============ -->
+  <main class="page-wrap" id="pageWrap">
+    <div class="sheet" id="sheet"><!-- rendered worksheet --></div>
+  </main>
+</div>
+
+<script src="banks.js"></script>
+<script src="generator.js"></script>
+<script src="themes.js"></script>
+<script src="stem.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

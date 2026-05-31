@@ -1,0 +1,93 @@
+/* themes.css — styling for the optional decorative theme graphics.
+ *
+ * Standalone companion to themes.js. Uses the existing CSS variables
+ * (--accent, --ink, --line). Decorations are light, muted accents that
+ * must never interfere with worksheet problems or push content to a new
+ * page. Everything is print-friendly (B/W safe + color-exact when in color).
+ */
+
+/* ---- shared svg sizing & color ---- */
+.theme-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ---- header decoration: a muted row of small icons flanking the title ---- */
+.theme-decor {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  /* tint toward the accent but stay light so it reads as decoration */
+  color: var(--accent, #2563eb);
+  opacity: 0.55;
+  pointer-events: none;
+  margin: 2px 0;
+}
+
+.theme-decor__icon {
+  display: inline-flex;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+}
+
+/* slightly smaller on tight headers */
+.ws-head .theme-decor__icon {
+  width: 30px;
+  height: 30px;
+}
+
+/* ---- corner / footer flourish: single small icon, out of the way ---- */
+.theme-corner {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  width: 36px;
+  height: 36px;
+  color: var(--accent, #2563eb);
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.theme-corner__icon {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* keep flourishes from forcing reflow/overflow */
+.theme-decor,
+.theme-corner {
+  max-width: 100%;
+  overflow: visible;
+}
+
+/* ---- print: keep colors, keep on one page, no layout breakage ---- */
+@media print {
+  .theme-decor,
+  .theme-corner,
+  .theme-svg {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    color-adjust: exact;
+  }
+
+  /* never let a decoration trigger an extra page */
+  .theme-decor,
+  .theme-corner {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* corner flourish even lighter in print so it never competes with ink */
+  .theme-corner {
+    opacity: 0.28;
+  }
+
+  .theme-decor {
+    opacity: 0.5;
+  }
+}

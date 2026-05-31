@@ -1,0 +1,31 @@
+# Dependabot — weekly dependency updates for edu-lab.
+# Covers GitHub Actions and Terraform always; npm is included for if/when a
+# package.json is added (Dependabot skips ecosystems with no manifest).
+version: 2
+updates:
+  # GitHub Actions used in .github/workflows/
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "github-actions"
+
+  # npm — only acts if a package.json appears at the repo root
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "javascript"
+
+  # Terraform providers/modules under terraform/
+  - package-ecosystem: "terraform"
+    directory: "/terraform"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "terraform"

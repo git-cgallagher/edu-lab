@@ -1,0 +1,19 @@
+node_modules/
+coverage/
+.DS_Store
+*.local
+
+# Test artifacts
+test-results/
+playwright-report/
+
+# Terraform — never commit real variable values or state
+# Recursive globs so nested module dirs (e.g. terraform/app/) are also covered
+**/*.tfvars
+!**/*.tfvars.example
+**/.terraform/
+**/.terraform.lock.hcl
+**/*.tfstate
+**/*.tfstate.*
+.env
+.env.*

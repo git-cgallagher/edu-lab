@@ -1,0 +1,21 @@
+# Copy this file to terraform.tfvars and adjust if needed.
+# terraform.tfvars is gitignored — never commit real values.
+#
+# All variables have sensible defaults in variables.tf, so terraform.tfvars is
+# optional. Override here only if you need different values.
+
+# AWS region (default: us-east-1 — required for CloudFront ACM certs)
+# aws_region = "us-east-1"
+
+# Custom domain.
+# NOTE: change to .co here if intended — default is the .com domain.
+# domain_name = "edulab.appalachiancloud.com"
+
+# GitHub repository in owner/repo form (scopes the OIDC deploy role)
+# github_repo = "git-cgallagher/edu-lab"
+
+# Resource tags
+# tags = {
+#   Project   = "edulab"
+#   ManagedBy = "terraform"
+# }

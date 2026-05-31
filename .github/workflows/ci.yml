@@ -1,0 +1,113 @@
+# CI/CD for edu-lab — a NO-BUILD multi-file static site.
+#
+# On pull request : build-test only (lint / syntax check).
+# On push to main : build-test + deploy (OIDC -> S3 sync -> CloudFront invalidation).
+#
+# Authentication uses GitHub OIDC — there are NO static AWS keys in this repo.
+# The deploy job assumes the IAM role created by terraform:
+#
+#     appalachiancloud-edulab-github-deploy
+#
+# Required repository VARIABLES (Settings -> Secrets and variables -> Actions -> Variables):
+#
+#     AWS_ACCOUNT_ID   AWS account ID, e.g. 651120422878  (used to build the role ARN)
+#     S3_BUCKET        Target S3 bucket, e.g. appalachiancloud-edulab-site
+#     CLOUDFRONT_ID    CloudFront distribution ID for cache invalidation
+#
+# Optional repository VARIABLE:
+#
+#     AWS_REGION       Defaults to us-east-1 if unset
+#
+# All three required values are emitted by `terraform output` — see DEPLOY.md.
+
+name: CI
+
+on:
+  push:
+    branches: ["main", "claude/**"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # No-build static site: lightweight syntax check of every JS file.
+      - name: Syntax-check JavaScript (node --check)
+        run: |
+          set -e
+          found=0
+          while IFS= read -r -d '' f; do
+            echo "node --check $f"
+            node --check "$f"
+            found=1
+          done < <(find . -type f -name '*.js' \
+                     -not -path './node_modules/*' \
+                     -not -path './.git/*' -print0)
+          if [ "$found" = "0" ]; then
+            echo "No .js files found to check."
+          fi
+
+      # Optional unit tests: only run if a package.json with a test script exists.
+      - name: Run unit tests (if present)
+        run: |
+          if [ -f package.json ] && grep -q '"test"' package.json; then
+            npm ci || npm install
+            npm test
+          else
+            echo "No package.json test script — skipping unit tests."
+          fi
+
+  deploy:
+    name: Deploy to S3 + CloudFront
+    runs-on: ubuntu-latest
+    needs: build-test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    permissions:
+      id-token: write # required for OIDC auth with AWS
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ vars.AWS_ACCOUNT_ID }}:role/appalachiancloud-edulab-github-deploy
+          aws-region: ${{ vars.AWS_REGION || 'us-east-1' }}
+
+      # Sync the static files directly to S3 (no dist/ build step).
+      # Long-cache everything except index.html, which must always be fresh.
+      - name: Sync static site to S3
+        run: |
+          aws s3 sync . s3://${{ vars.S3_BUCKET }} \
+            --delete \
+            --exclude ".git/*" \
+            --exclude ".github/*" \
+            --exclude "terraform/*" \
+            --exclude "tests/*" \
+            --exclude "node_modules/*" \
+            --exclude "*.md" \
+            --exclude "LICENSE" \
+            --exclude ".gitignore" \
+            --exclude "index.html" \
+            --cache-control "public, max-age=31536000, immutable"
+
+          # index.html must not be cached so users always get the latest.
+          aws s3 cp index.html s3://${{ vars.S3_BUCKET }}/index.html \
+            --cache-control "no-cache, no-store, must-revalidate"
+
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ vars.CLOUDFRONT_ID }} \
+            --paths "/*"

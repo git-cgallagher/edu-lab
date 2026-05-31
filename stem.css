@@ -1,0 +1,53 @@
+/* ============================================================
+   stem.css — STEM-specific layout styles
+   Loaded in <head> alongside styles.css. Reuses the same CSS
+   variables (--accent, --ink, --line, --soft, --muted) and the
+   existing .block / .block-grid / .work / .ans patterns.
+   ============================================================ */
+
+/* shared STEM grid spacing (rides on top of .block-grid) */
+.stem-grid{display:grid; gap:12px}
+
+/* ---------- sequencing: labeled step list ---------- */
+.seq-steps{margin-top:8px; display:flex; flex-direction:column; gap:4px}
+.seq-step{font-size:13px; line-height:1.35; border:1px solid var(--line);
+  border-radius:6px; padding:4px 8px; background:var(--soft)}
+.seq-step b{color:var(--accent); margin-right:4px}
+
+/* ---------- what-comes-next patterns ---------- */
+.pattern-row{display:flex; align-items:center; flex-wrap:wrap; gap:8px; font-size:18px;
+  font-variant-numeric:tabular-nums}
+.pattern-row .pnum{font-size:10px; color:var(--muted); margin-right:2px}
+.pat-seq{letter-spacing:1px}
+.pat-shapes{font-size:24px; letter-spacing:4px; color:var(--ink)}
+.pat-arrow{color:var(--muted)}
+.pat-box{display:inline-block; border:1.5px solid var(--ink); width:42px; height:32px;
+  border-radius:6px; vertical-align:middle}
+.pat-next{display:inline-flex; align-items:center; justify-content:center;
+  min-width:42px; height:32px; border:1.5px solid var(--accent); border-radius:6px;
+  color:var(--accent); font-weight:700; font-size:20px; padding:0 6px}
+
+/* ---------- binary ---------- */
+.stem-binary .bin-box{display:inline-block; border:1.5px solid var(--ink);
+  min-width:90px; height:24px; border-radius:5px; vertical-align:middle}
+.stem-binary .bin-ans{font-family:"Courier New",monospace; letter-spacing:2px}
+
+/* ---------- computer parts rows (reserved hook) ---------- */
+.stem-part{display:flex; align-items:center; gap:10px; font-size:14px;
+  border-bottom:1px dashed var(--line); padding:4px 0}
+.stem-part .part-name{font-weight:700; color:var(--accent); flex:0 0 110px}
+
+/* ============================================================
+   PRINT RULES — keep STEM cells intact and colors visible
+   ============================================================ */
+@media print{
+  .stem-grid .block,
+  .pattern-row,
+  .seq-step{break-inside:avoid}
+  /* answers print black like the rest of the sheet */
+  .pat-next, .stem-binary .bin-ans{color:#000 !important}
+  .pat-next{border-color:#000 !important}
+  /* preserve any filled/shaded STEM elements (step chips, shape glyphs) */
+  .seq-step, .pat-shapes{
+    -webkit-print-color-adjust:exact; print-color-adjust:exact}
+}
