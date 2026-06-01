@@ -15,7 +15,7 @@
 ###############################################################################
 
 terraform {
-  required_version = ">= 1.5.0"
+  required_version = ">= 1.10.0" # S3-native state locking (use_lockfile)
 
   required_providers {
     aws = {
@@ -26,13 +26,15 @@ terraform {
 
   # Shared S3 backend provisioned by aws-account-baseline (see mountain-infra).
   # State is keyed per project under the shared bucket.
+  # NOTE: this account uses S3-native locking (use_lockfile, Terraform >= 1.10).
+  # The old DynamoDB lock table was removed — do NOT add dynamodb_table here.
   backend "s3" {
-    bucket         = "appalachiancloud-tfstate-651120422878"
-    key            = "edulab/terraform.tfstate"
-    region         = "us-east-1"
-    dynamodb_table = "appalachiancloud-tfstate-lock"
-    encrypt        = true
-    kms_key_id     = "alias/appalachiancloud-audit"
+    bucket       = "appalachiancloud-tfstate-651120422878"
+    key          = "edulab/terraform.tfstate"
+    region       = "us-east-1"
+    encrypt      = true
+    kms_key_id   = "alias/appalachiancloud-audit"
+    use_lockfile = true
   }
 }
 
@@ -139,7 +141,12 @@ resource "aws_cloudfront_distribution" "site" {
   is_ipv6_enabled     = true
   default_root_object = "index.html"
   comment             = "edu-lab static site"
-  aliases             = [var.domain_name]
+
+  # Custom-domain aliases are attached only once the ACM cert is validated
+  # (see enable_custom_domain). First apply runs with the default CloudFront
+  # cert so the distribution provisions immediately; flip the flag and re-apply
+  # after the cert is Issued.
+  aliases = var.enable_custom_domain ? [var.domain_name] : []
 
   origin {
     domain_name              = aws_s3_bucket.site.bucket_regional_domain_name
@@ -178,9 +185,12 @@ resource "aws_cloudfront_distribution" "site" {
   }
 
   viewer_certificate {
-    acm_certificate_arn      = aws_acm_certificate.site.arn
-    ssl_support_method       = "sni-only"
-    minimum_protocol_version = "TLSv1.2_2021"
+    # Phase 1 (enable_custom_domain = false): default *.cloudfront.net cert,
+    # works without a validated ACM cert. Phase 2: the validated ACM cert.
+    cloudfront_default_certificate = var.enable_custom_domain ? null : true
+    acm_certificate_arn            = var.enable_custom_domain ? aws_acm_certificate.site.arn : null
+    ssl_support_method             = var.enable_custom_domain ? "sni-only" : null
+    minimum_protocol_version       = var.enable_custom_domain ? "TLSv1.2_2021" : null
   }
 }
 

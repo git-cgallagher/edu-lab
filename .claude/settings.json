@@ -1,0 +1,51 @@
+{
+  "//": "Committed project guardrails for AI coding agents. Two layers: (1) these deny rules, evaluated by the permission system before any tool runs; (2) the PreToolUse hook below, which pattern-matches destructive commands. See the 'AI agent guardrails' section in AGENTS.md for the rationale. Personal/local overrides belong in settings.local.json (gitignored), which must never weaken these.",
+  "permissions": {
+    "deny": [
+      "Bash(terraform destroy:*)",
+      "Bash(tofu destroy:*)",
+      "Bash(terraform apply -destroy:*)",
+      "Bash(terraform state rm:*)",
+      "Bash(terraform state mv:*)",
+      "Bash(terraform force-unlock:*)",
+      "Bash(rm -rf:*)",
+      "Bash(rm -fr:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git clean -fd:*)",
+      "Bash(aws iam delete-role:*)",
+      "Bash(aws iam delete-user:*)",
+      "Bash(aws iam delete-policy:*)",
+      "Bash(aws kms schedule-key-deletion:*)",
+      "Bash(aws kms disable-key:*)",
+      "Bash(aws s3 rb:*)",
+      "Bash(aws dynamodb delete-table:*)",
+      "Bash(aws cloudtrail delete-trail:*)",
+      "Bash(aws cloudtrail stop-logging:*)",
+      "Bash(aws guardduty delete-detector:*)",
+      "Bash(aws lightsail delete-instance:*)",
+      "Read(./**/*.tfstate)",
+      "Read(./**/*.tfvars)",
+      "Read(./**/.env)",
+      "Read(./**/*.pem)",
+      "Edit(./.claude/settings.json)",
+      "Edit(./.claude/hooks/**)",
+      "Write(./.claude/settings.json)",
+      "Write(./.claude/hooks/**)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Edit|Write|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/guardrail.py\""
+          }
+        ]
+      }
+    ]
+  }
+}

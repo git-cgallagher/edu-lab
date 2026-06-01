@@ -375,16 +375,27 @@ function renderPassage(data,showAns){
   wrap.appendChild(ol); return wrap;
 }
 
-/* ---------- dispatch ---------- */
-function renderProblems(opt,data,showAns){
-  const layout=META()[opt.type].layout;
+/* ---------- mixed review (several topics, one page) ---------- */
+function renderMixed(data,showAns){
+  const wrap=el('div','mixed-wrap');
+  data.sections.forEach((s,idx)=>{
+    const sec=el('div','mixed-section');
+    sec.appendChild(el('div','mixed-sec-head',`Part ${idx+1}: ${s.label}`));
+    sec.appendChild(renderByLayout(s.type,s.layout,s.data,showAns));
+    wrap.appendChild(sec);
+  });
+  return wrap;
+}
+
+/* ---------- dispatch by layout (shared by single + mixed sections) ---------- */
+function renderByLayout(type,layout,data,showAns){
   // STEM add-on renderers (registered by stem.js)
   if(window.STEM_RENDERERS && window.STEM_RENDERERS[layout])
     return window.STEM_RENDERERS[layout](data,showAns);
   switch(layout){
-    case 'stack': return renderStack(data,opt.type,showAns);
+    case 'stack': return renderStack(data,type,showAns);
     case 'longdiv': return renderLongDiv(data,showAns);
-    case 'inline': return renderInline(data,opt.type,showAns);
+    case 'inline': return renderInline(data,type,showAns);
     case 'fraction': return renderFractions(data,showAns);
     case 'factfamily': return renderFactFamily(data,showAns);
     case 'patterns': return renderPatterns(data,showAns);
@@ -396,8 +407,14 @@ function renderProblems(opt,data,showAns){
     case 'vocabmatch': return renderVocabMatch(data,showAns);
     case 'wordsearch': return renderWordSearch(data,showAns);
     case 'passage': return renderPassage(data,showAns);
-    case 'block': default: return renderBlocks(data,opt.type,showAns);
+    case 'block': default: return renderBlocks(data,type,showAns);
   }
+}
+
+function renderProblems(opt,data,showAns){
+  const layout=META()[opt.type].layout;
+  if(layout==='mixed') return renderMixed(data,showAns);
+  return renderByLayout(opt.type,layout,data,showAns);
 }
 
 /* ---------- header ---------- */

@@ -7,9 +7,13 @@
 # AWS region (default: us-east-1 — required for CloudFront ACM certs)
 # aws_region = "us-east-1"
 
-# Custom domain.
-# NOTE: change to .co here if intended — default is the .com domain.
-# domain_name = "edulab.appalachiancloud.com"
+# Custom domain (default: edulab.appalachiancloud.co)
+# domain_name = "edulab.appalachiancloud.co"
+
+# Two-phase custom-domain switch. Leave false (default) for the FIRST apply —
+# CloudFront uses the default *.cloudfront.net cert and provisions immediately.
+# Set true and re-apply once the ACM cert is Issued to attach the custom domain.
+# enable_custom_domain = false
 
 # GitHub repository in owner/repo form (scopes the OIDC deploy role)
 # github_repo = "git-cgallagher/edu-lab"

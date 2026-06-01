@@ -564,9 +564,40 @@ function genShapes(R, opt){
 }
 
 /* ============================================================
+   MIXED REVIEW — several topics on one page
+   Picks 2-4 array-returning types from the same subject+grade,
+   generates a small batch of each. Reproducible by seed.
+   ============================================================ */
+function genMixed(R, opt){
+  const subj=opt.subject, g=G(opt);
+  const SKIP=new Set(['passage','vocabmatch','wordsearch','mixed']); // single-content / self
+  let pool=Object.keys(TYPE_META).filter(t=>{
+    const m=TYPE_META[t];
+    return m.subject===subj && m.grades.includes(g) && !SKIP.has(m.layout);
+  });
+  pool=R.shuffle(pool);
+  const n=Math.min(4, Math.max(2, pool.length));
+  const chosen=pool.slice(0, n);
+  const per=(layout)=> layout==='stack'?8 : layout==='inline'?8 : layout==='clock'?4
+    : layout==='geometry'?3 : layout==='currency'?4 : layout==='counting'?6
+    : layout==='shapes'?8 : layout==='factfamily'?3 : layout==='fraction'?4 : 4;
+  const sections=chosen.map(t=>{
+    const m=TYPE_META[t]; const want=per(m.layout);
+    const subOpt=Object.assign({}, opt, {type:t, count:want});
+    let data=GENERATORS[t](R, subOpt);
+    // some generators enforce an internal minimum; cap each section so the
+    // combined sheet stays on one page (single-content types are excluded above)
+    if(Array.isArray(data) && data.length>want) data=data.slice(0, want);
+    return { type:t, label:m.label, layout:m.layout, data };
+  });
+  return { render:'mixed', sections };
+}
+
+/* ============================================================
    DISPATCH + METADATA
    ============================================================ */
 const GENERATORS = {
+  mixedmath:genMixed, mixedela:genMixed, mixedstem:genMixed,
   addition:genAddition, subtraction:genSubtraction, multiplication:genMultiplication, division:genDivision,
   longmult:genLongMult, longdiv:genLongDiv,
   counting:genCounting, shapes:genShapes,
@@ -604,6 +635,7 @@ const TYPE_META = {
   currency:{subject:'math',group:'Geometry & measurement',label:'US currency',grades:[2,3,4,5],layout:'currency',defaultCount:12},
   measurement:{subject:'math',group:'Geometry & measurement',label:'Measurement',grades:[2,3,4,5],layout:'inline',defaultCount:24},
   wordproblems:{subject:'math',group:'Applied',label:'Word problems',grades:[1,2,3,4,5],layout:'block',defaultCount:8},
+  mixedmath:{subject:'math',group:'Mixed review',label:'Mixed math review',grades:[0,1,2,3,4,5],layout:'mixed',defaultCount:4},
   // ---- LANGUAGE ARTS ----
   synant:{subject:'la',group:'Vocabulary',label:'Synonyms & antonyms',grades:[2,3,4,5],layout:'block',defaultCount:16},
   affixes:{subject:'la',group:'Word study',label:'Prefixes & suffixes',grades:[3,4,5],layout:'block',defaultCount:14},
@@ -614,8 +646,11 @@ const TYPE_META = {
   spelling:{subject:'la',group:'Spelling & vocabulary',label:'Spelling practice',grades:[2,3,4,5],layout:'block',defaultCount:16},
   vocabmatch:{subject:'la',group:'Spelling & vocabulary',label:'Vocabulary match',grades:[2,3,4,5],layout:'vocabmatch',defaultCount:8},
   wordsearch:{subject:'la',group:'Spelling & vocabulary',label:'Word search',grades:[2,3,4,5],layout:'wordsearch',defaultCount:8},
+  mixedela:{subject:'la',group:'Mixed review',label:'Mixed language arts review',grades:[2,3,4,5],layout:'mixed',defaultCount:4},
   // ---- READING ----
   reading:{subject:'reading',group:'Comprehension',label:'Reading passage + questions',grades:[1,2,3,4,5],layout:'passage',defaultCount:1},
+  // ---- STEM mixed (stem types are merged in from stem.js at runtime) ----
+  mixedstem:{subject:'stem',group:'Mixed review',label:'Mixed STEM review',grades:[2,3,4,5],layout:'mixed',defaultCount:4},
 };
 
 const SUBJECTS = { math:'Math', la:'Language Arts', reading:'Reading' };

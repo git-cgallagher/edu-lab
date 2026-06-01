@@ -118,6 +118,12 @@ button.primary:hover{background:var(--accent-d)}
 .count-q .cbox{display:inline-block; border:1.5px solid var(--ink); width:42px; height:24px;
   border-radius:5px; vertical-align:middle}
 
+/* ---------- mixed review ---------- */
+.mixed-wrap{display:flex; flex-direction:column; gap:14px}
+.mixed-section{border:1px solid var(--line); border-radius:8px; padding:8px 10px 10px}
+.mixed-sec-head{font-size:13px; font-weight:800; color:var(--accent); text-transform:uppercase;
+  letter-spacing:.03em; margin-bottom:8px; padding-bottom:4px; border-bottom:1.5px solid var(--soft)}
+
 /* ---------- shared answer color & blanks ---------- */
 .ansblue{color:var(--accent)}
 .blank{border-bottom:1.5px solid var(--ink); display:inline-block; min-width:54px; height:16px; vertical-align:middle}
@@ -202,7 +208,7 @@ button.primary:hover{background:var(--accent-d)}
   .sheet{
     width:auto; min-height:auto; padding:0; box-shadow:none; border-radius:0;
   }
-  .prob,.inline-prob,.block,.clock-cell,.frac-cell,.geo-cell,.match-row,.passage-q li,.count-cell{break-inside:avoid}
+  .prob,.inline-prob,.block,.clock-cell,.frac-cell,.geo-cell,.match-row,.passage-q li,.count-cell,.mixed-section{break-inside:avoid}
   .ans{color:#000 !important}
   .inline-prob .box{color:#000 !important}
   /* keep shaded fills visible when printing (fraction bars, word-search hits) */
