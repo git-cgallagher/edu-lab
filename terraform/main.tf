@@ -125,8 +125,47 @@ resource "aws_acm_certificate" "site" {
 # the records to create are exposed via the acm_validation_records output.
 
 ###############################################################################
-# CloudFront — Origin Access Control + distribution
+# CloudFront — Origin Access Control + distribution + response headers
 ###############################################################################
+
+# Baseline security headers applied to every response. All defense-in-depth
+# for a static K-5 site with no user accounts, cookies, or sensitive data.
+# CSP: script-src 'self' only (no inline scripts in the app); style-src needs
+# 'unsafe-inline' because app.js uses insertAdjacentHTML with inline style=
+# attributes for grid layouts.
+resource "aws_cloudfront_response_headers_policy" "site" {
+  name    = "appalachiancloud-edulab-security-headers"
+  comment = "Baseline security headers for edu-lab"
+
+  security_headers_config {
+    strict_transport_security {
+      access_control_max_age_sec = 31536000 # 1 year
+      include_subdomains         = true
+      preload                    = false
+      override                   = true
+    }
+    frame_options {
+      frame_option = "SAMEORIGIN"
+      override     = true
+    }
+    content_type_options {
+      override = true
+    }
+    referrer_policy {
+      referrer_policy = "strict-origin-when-cross-origin"
+      override        = true
+    }
+    xss_protection {
+      protection = true
+      mode_block = true
+      override   = true
+    }
+    content_security_policy {
+      content_security_policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"
+      override                = true
+    }
+  }
+}
 
 resource "aws_cloudfront_origin_access_control" "site" {
   name                              = "appalachiancloud-edulab-oac"
@@ -162,7 +201,8 @@ resource "aws_cloudfront_distribution" "site" {
     compress               = true
 
     # AWS managed "CachingOptimized" policy.
-    cache_policy_id = "658327ea-f89d-4fab-a63d-7e88639e58f6"
+    cache_policy_id            = "658327ea-f89d-4fab-a63d-7e88639e58f6"
+    response_headers_policy_id = aws_cloudfront_response_headers_policy.site.id
   }
 
   # SPA-style fallback so deep links and a missing index resolve gracefully.
