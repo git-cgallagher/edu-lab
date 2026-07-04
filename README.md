@@ -17,7 +17,7 @@ your browser. No accounts, no tracking, no build step.
 | **Audience** | Parents & teachers of grades K–5 |
 | **Palette** | Sunshine Yellow `#FFC93C` · Sky Blue `#3DA5D9` on Cloud White `#FAFAF5` |
 | **Font** | [Baloo 2](https://fonts.google.com/specimen/Baloo+2) (display) · system sans (body) |
-| **Domain** | `edulab.appalachiancloud.com` |
+| **Domain** | `edulab.appalachiancloud.co` |
 
 ---
 
@@ -62,38 +62,30 @@ npm test      # optional unit tests
 
 ```
 edu-lab/
-├── index.html              # App entry — the whole UI
-├── styles.css              # Brand + layout stylesheet
-├── print.css               # Print-only stylesheet (worksheet layout)
-├── app.js                  # App bootstrap & DOM wiring
+├── index.html       # App entry — full single-page UI
+├── app.js           # UI wiring, dropdown population, print handler
+├── generator.js     # Seeded RNG (mulberry32) + math / LA / reading generators
+├── stem.js          # STEM generators (self-registers onto window.WS)
+├── banks.js         # Themed word banks (space, animals, ocean, dinosaurs, …)
+├── themes.js        # Theme metadata + decorate helpers
+├── styles.css       # Brand + layout + print styles
+├── themes.css       # Per-theme visual accents
+├── stem.css         # STEM worksheet styles
 │
-├── src/                    # Worksheet logic (plain ES modules)
-│   ├── generators/         # Pure worksheet generators by subject
-│   │   ├── math.js
-│   │   ├── language-arts.js
-│   │   ├── reading.js
-│   │   └── stem.js
-│   ├── renderers.js        # Generator output → printable HTML
-│   ├── themes.js           # Theme metadata + word banks
-│   └── utils.js            # Helpers (random, escHtml, etc.)
-│
-├── assets/                 # Static images / line art / fonts
-│
-├── tests/                  # Optional unit tests (if present)
-│
-├── terraform/              # Infrastructure as code (S3 + CloudFront + OIDC)
-│   └── ...
+├── terraform/       # S3 (private) + CloudFront (OAC) + OIDC deploy role
 │
 ├── .github/
 │   ├── workflows/
-│   │   ├── ci.yml          # CI/CD: test on PR, deploy on push to main
-│   │   └── codeql.yml      # CodeQL security scanning
-│   └── dependabot.yml      # Weekly dependency updates
+│   │   ├── ci.yml      # No-build syntax check + OIDC deploy on push-to-main
+│   │   └── codeql.yml  # CodeQL security scanning
+│   └── dependabot.yml
 │
-├── DEPLOY.md               # Deploy runbook (Terraform → Cloudflare → GitHub → push)
+├── DEPLOY.md
 ├── LICENSE
-└── README.md               # This file
+└── README.md
 ```
+
+Scripts load in dependency order in `index.html` (`banks.js` → `generator.js` → `themes.js` → `stem.js` → `app.js`). Everything self-registers onto `window` — no bundler, no imports.
 
 ---
 
@@ -105,10 +97,10 @@ DNS is managed in **Cloudflare**.
 
 See **[DEPLOY.md](DEPLOY.md)** for the full, copy-pasteable runbook:
 
-1. `terraform apply` the infrastructure (via the `mountain-terraform` aws-vault profile)
-2. Add the ACM validation + site CNAME records in Cloudflare
-3. Create the GitHub repo and set repo **Variables** (`AWS_ACCOUNT_ID`, `S3_BUCKET`, `CLOUDFRONT_ID`)
-4. `git push` to `main` — CI deploys automatically
+1. `terraform apply` the infrastructure (via the `edulab-terraform` aws-vault profile — `mountain-terraform` deliberately cannot create IAM roles)
+2. Add the ACM validation + site CNAME records to Cloudflare (managed as code in `mountain-infra/terraform/cloudflare`)
+3. Set the edu-lab repo **Variables** (`AWS_ACCOUNT_ID`, `S3_BUCKET`, `CLOUDFRONT_ID`, `AWS_REGION`) from `terraform output`
+4. `git push` to `main` — CI deploys automatically via OIDC
 
 ---
 

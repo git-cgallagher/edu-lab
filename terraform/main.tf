@@ -203,8 +203,11 @@ resource "aws_cloudfront_distribution" "site" {
 # instead of declaring an aws_iam_openid_connect_provider resource.
 ###############################################################################
 
+# Look up by ARN (deterministic) rather than URL — the URL form requires
+# iam:ListOpenIDConnectProviders which the scoped edulab-terraform role
+# deliberately lacks. Only iam:GetOpenIDConnectProvider is needed here.
 data "aws_iam_openid_connect_provider" "github" {
-  url = "https://token.actions.githubusercontent.com"
+  arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/token.actions.githubusercontent.com"
 }
 
 data "aws_iam_policy_document" "github_assume_role" {

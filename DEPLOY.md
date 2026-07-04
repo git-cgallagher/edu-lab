@@ -55,9 +55,14 @@ Add an aws-vault profile that assumes it (in `~/.aws/config`):
 
 ```ini
 [profile edulab-terraform]
-source_profile = personal
+source_profile = tmp-admin                                # or your permanent IAM user
 role_arn       = arn:aws:iam::651120422878:role/edulab-terraform
+mfa_serial     = arn:aws:iam::651120422878:mfa/<your-device>
 ```
+
+> `mfa_serial` MUST be set on each role profile — it is NOT inherited from
+> `source_profile`. Without it, aws-vault does a no-MFA `AssumeRole` and the role
+> trust denies. (See `~/Code/ALIGNMENT-CHECKLIST.md` Phase 2 for the history.)
 
 Sanity check before applying the app stack:
 
