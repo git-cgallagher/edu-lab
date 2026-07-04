@@ -3,6 +3,11 @@
 Static educational worksheet generator (vanilla JS SPA) deployed to S3 + CloudFront via
 GitHub Actions OIDC. The deploy/runbook is in **[../DEPLOY.md](../DEPLOY.md)**.
 
+<!-- Claude Code auto-loads this file and expands @-imports at launch. AGENTS.md
+     (repo root) is the tool-agnostic source of truth — Cursor/Codex/Cowork read it
+     directly; this import makes Claude Code load it too. Keep AGENTS.md updated. -->
+@../AGENTS.md
+
 ## 🛡️ AI agent guardrails (do no harm)
 
 These rules apply to **any** AI agent (Claude Code, Cursor, Copilot, etc.) and to humans
