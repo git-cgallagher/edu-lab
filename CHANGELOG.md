@@ -13,6 +13,13 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 - **README** — live-site link, a user-facing **Using the site** section, and
   documentation for the support-link framework.
 
+### Fixed
+- **Stale CSS/JS for returning visitors** (#16) — the deploy now appends a
+  per-release version token (`?v=<short-sha>`) to the CSS/JS references in
+  `index.html`, so repeat visitors fetch fresh assets each release instead of
+  reusing their `immutable`-cached copies until a hard refresh. Assets keep
+  their long-lived immutable cache; only the browser cache key changes.
+
 ### Changed
 - **Rebranded** the site's display name from `edu-lab` to **ACE LessonsAtHome**
   (page `<title>`, `<h1>`, and README brand). Infrastructure identifiers

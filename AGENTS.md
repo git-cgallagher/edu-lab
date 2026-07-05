@@ -15,6 +15,7 @@
 - **CI:** the build/deploy workflow (`ci.yml`) passes. **CodeQL** requires enabling *Code Scanning* in Settings → Code security → Code scanning → *Default* (the workflow itself is fine; it currently fails with "Code scanning is not enabled for this repository"). Repo-settings flip, not a code fix.
 - **OIDC provider lookup uses `arn`, not `url`:** the scoped `edulab-terraform` role has `iam:GetOpenIDConnectProvider` but not `ListOpenIDConnectProviders`. The data source in `terraform/main.tf` is ARN-form so plan/apply work without a baseline change.
 - Unlike Boss BOS, edu-lab uses **AES256** (not KMS) with no origin-request policy and no `aws:RequestedRegion` condition, so it does not need those fixes.
+- **Asset caching / cache-busting (#16, fixed):** CSS/JS are uploaded `immutable, max-age=1yr` on **unversioned filenames**, so CloudFront's `/*` invalidation alone does *not* refresh **returning browsers**. The deploy fixes this by rewriting `index.html` at upload time to append `?v=<short-sha>` (`${GITHUB_SHA::8}`) to each local `.css`/`.js` ref (`ci.yml`, "Sync static site to S3" step); `index.html` itself stays `no-cache`. **Do not** reference CSS/JS from `index.html` in a way the `sed` can't version (keep refs as bare local `name.css`/`name.js`), and don't drop the versioning step — without it, CSS/JS changes are invisible to repeat visitors until hard-refresh.
 
 ## 📝 Documentation & change discipline
 

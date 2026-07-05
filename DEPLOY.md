@@ -214,6 +214,13 @@ The push to `main` triggers `.github/workflows/ci.yml`:
 2. **deploy** — assumes `appalachiancloud-edulab-github-deploy` via OIDC,
    `aws s3 sync`s the static files to the bucket, and invalidates CloudFront.
 
+> **Cache-busting (#16):** assets are uploaded `immutable, max-age=1yr`, so the
+> deploy rewrites `index.html` at upload time to append `?v=${GITHUB_SHA::8}` to
+> each local `.css`/`.js` ref (`index.html` itself stays `no-cache`). This lets
+> returning visitors pick up CSS/JS changes each release without a hard refresh.
+> Keep asset references as bare local filenames (`name.css`/`name.js`) so the
+> `sed` in the deploy step can version them.
+
 Watch it:
 
 ```bash
