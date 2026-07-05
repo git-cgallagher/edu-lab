@@ -1,10 +1,16 @@
-# edu-lab
+# ACE LessonsAtHome
 
 > **Printable worksheets for curious kids, in seconds.**
+
+**▶ Live: <https://edulab.appalachiancloud.co>** &nbsp;·&nbsp; repo & infra name: `edu-lab`
 
 A fast, free educational worksheet generator for grades K–5. Pick a grade,
 subject, and theme — get a clean, print-ready worksheet (plus answer key) in
 your browser. No accounts, no tracking, no build step.
+
+If it's useful to your family or classroom, you can
+[**support us on Patreon**](https://www.patreon.com/c/AppalachianCloud) — there's
+a link in the app sidebar too.
 
 ---
 
@@ -33,6 +39,25 @@ your browser. No accounts, no tracking, no build step.
 - **Answer keys** — auto-generated alongside each worksheet
 - **Print-ready** — dedicated print stylesheet; one click to print or Save-as-PDF
 - **No-build, no-account** — plain HTML/CSS/JS; just open `index.html`
+
+---
+
+## Using the site
+
+Open **<https://edulab.appalachiancloud.co>** (or `index.html` locally) — no
+account or sign-in. From the left sidebar:
+
+1. **Subject** — Math, Language Arts, Reading, or STEM.
+2. **Worksheet type** — options update to match the subject + grade.
+3. **Starting grade** & **Difficulty** — tune the content level.
+4. **Problems per page** — defaults per type; override if you like.
+5. *(optional)* **Seed** — reuse the same seed + settings to regenerate the
+   **identical** sheet later, so a printed answer key always matches.
+6. *(optional)* **Answer key** and **Fun theme** toggles for a key page and
+   kid-friendly decorations.
+7. **Generate**, then **Print** (or Save-as-PDF from the print dialog).
+
+Everything runs in your browser — nothing is uploaded.
 
 ---
 
@@ -68,6 +93,7 @@ edu-lab/
 ├── stem.js          # STEM generators (self-registers onto window.WS)
 ├── banks.js         # Themed word banks (space, animals, ocean, dinosaurs, …)
 ├── themes.js        # Theme metadata + decorate helpers
+├── support.js       # Data-driven "support the project" links (Patreon, …)
 ├── styles.css       # Brand + layout + print styles
 ├── themes.css       # Per-theme visual accents
 ├── stem.css         # STEM worksheet styles
@@ -85,7 +111,9 @@ edu-lab/
 └── README.md
 ```
 
-Scripts load in dependency order in `index.html` (`banks.js` → `generator.js` → `themes.js` → `stem.js` → `app.js`). Everything self-registers onto `window` — no bundler, no imports.
+Scripts load in dependency order in `index.html` (`banks.js` → `generator.js` → `themes.js` → `stem.js` → `support.js` → `app.js`). Everything self-registers onto `window` — no bundler, no imports.
+
+To add or change support links, edit the `SUPPORT_LINKS` array in `support.js` — entries render automatically into the sidebar footer.
 
 ---
 

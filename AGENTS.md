@@ -5,7 +5,7 @@
 > Read this, then `README.md` + `DEPLOY.md`, then `~/Code/AGENTS.md` (workspace map).
 
 ## Stack & publish
-- **Site:** plain HTML/CSS/JS, no build step (`index.html`, `app.js`, `banks.js`, `generator.js`, `stem.*`, `themes.*`, `styles.css`). CI syntax-checks JS with `node --check`.
+- **Site:** plain HTML/CSS/JS, no build step (`index.html`, `app.js`, `banks.js`, `generator.js`, `stem.*`, `themes.*`, `support.js`, `styles.css`). CI syntax-checks JS with `node --check`. `support.js` is a data-driven support-link footer (Patreon etc.) — edit its `SUPPORT_LINKS` array. **Display brand is "ACE LessonsAtHome"; repo/infra keep the `edu-lab`/`edulab` identifiers.**
 - **Infra:** `terraform/` — S3 (AES256) + CloudFront (OAC) + ACM (DNS-validated). Apply with **`aws-vault exec edulab-terraform`** (region us-east-1, MFA). The account baseline + `edulab-terraform` role already exist.
 - **Deploy:** merge to `main` → GitHub Actions → OIDC (`appalachiancloud-edulab-github-deploy`) → S3 sync → CloudFront invalidation. Requires repo **variables** `AWS_ACCOUNT_ID`, `S3_BUCKET`, `CLOUDFRONT_ID` (from `terraform output`; see `DEPLOY.md`).
 
