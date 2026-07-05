@@ -12,7 +12,7 @@ your browser. No accounts, no tracking, no build step.
 
 | | |
 |---|---|
-| **Name** | edu-lab |
+| **Name** | ACE LessonsAtHome |
 | **Tagline** | Printable worksheets for curious kids, in seconds. |
 | **Audience** | Parents & teachers of grades K–5 |
 | **Palette** | Sunshine Yellow `#FFC93C` · Sky Blue `#3DA5D9` on Cloud White `#FAFAF5` |
