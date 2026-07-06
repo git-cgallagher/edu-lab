@@ -31,9 +31,11 @@ human — never guess on anything destructive or irreversible.**
   permanently unrecoverable.
 - **Never rewrite or erase history/work** — no `git push --force`, no `git reset --hard`,
   no `git clean -fd`, no `git branch -D`, no `rm -rf`.
-- **Never exfiltrate secrets** — do not read `*.tfvars`, `*.tfstate`, `.env`, or `.pem`
-  files and do not pipe their contents (or `aws ssm get-parameter --with-decryption`
-  output) into the network or a shell. No `curl … | sh` pipe-to-shell.
+- **Never exfiltrate secrets** — do not read `*.tfstate`, `.env`, or `.pem` files and do
+  not pipe their contents (or `aws ssm get-parameter --with-decryption` output) into the
+  network or a shell. No `curl … | sh` pipe-to-shell. (Reading/writing `*.tfvars` is
+  allowed — secrets live in SSM, not tfvars; the `Read(./**/*.tfvars)` deny in
+  `.claude/settings.json` must be removed by a human to take effect.)
 - **Never weaken the guardrails to complete a task.** Do not edit `.claude/settings.json`
   or `.claude/hooks/`, do not pass `--dangerously-skip-permissions`/`--yolo`, and do not
   re-shell a blocked command to evade detection. If a guardrail blocks something genuinely
