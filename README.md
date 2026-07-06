@@ -9,7 +9,7 @@ subject, and theme — get a clean, print-ready worksheet (plus answer key) in
 your browser. No accounts, no tracking, no build step.
 
 If it's useful to your family or classroom, you can
-[**support us on Patreon**](https://www.patreon.com/c/AppalachianCloud) — there's
+[**support us on Patreon**](https://www.patreon.com/cw/AppalachianCloud) — there's
 a link in the app sidebar too.
 
 ---

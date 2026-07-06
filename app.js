@@ -125,10 +125,21 @@ function renderInline(probs,type,showAns){
       c.appendChild(el('span','box',showAns?p.answer:''));
       c.appendChild(el('span',null,p.right));
     } else if(type==='measurement'||type==='decimals'){
-      const q=showAns? p.q.replace('___',`<b class="ansblue">${p.answer}</b>`)
-                     : p.q;
-      const tail = (showAns||p.q.includes('___'))?'':` <span class="box">${showAns?p.answer:''}</span>`;
-      c.appendChild(el('span',null,q+ (p.q.includes('___')?'':(showAns?` = <b class="ansblue">${p.answer}</b>`:' ______'))));
+      // Three shapes of question:
+      //   embedded blank   "1 foot = ___ inches" / "Compare: 1.2 ___ 3.4"  -> fill the ___
+      //   ends with "="    "1.50 + 2.30 ="                                 -> append answer, no extra "="
+      //   prose            "Round 5.23 to the nearest whole."              -> append " = answer"
+      const hasBlank=p.q.includes('___');
+      const endsEq=/=\s*$/.test(p.q);
+      let out;
+      if(hasBlank){
+        out = showAns ? p.q.replace('___',`<b class="ansblue">${p.answer}</b>`) : p.q;
+      } else if(showAns){
+        out = p.q + (endsEq?' ':' = ') + `<b class="ansblue">${p.answer}</b>`;
+      } else {
+        out = p.q + ' ______';
+      }
+      c.appendChild(el('span',null,out));
     } else { // plurals, contractions
       c.appendChild(el('span',null,p.q));
       c.appendChild(el('span','box wide',showAns?p.answer:''));
@@ -360,7 +371,11 @@ function renderWordSearch(data,showAns){
   for(let r=0;r<data.size;r++){ g+='<tr>'; for(let c=0;c<data.size;c++){
     const hit=placedSet.has(r+','+c); g+=`<td class="${hit?'wshit':''}">${data.grid[r][c]}</td>`; } g+='</tr>'; }
   g+='</table>';
-  let list='<div class="wslist"><h3>Find these words:</h3><div class="wswords">'+data.words.map(w=>`<span>${w}</span>`).join('')+'</div></div>';
+  // List only the words that were actually placed on the grid. Placement uses a
+  // bounded retry and can silently drop a word; listing data.words would show
+  // words that don't exist in the grid (unsolvable). data.placed is the source of
+  // truth for what's findable, and it's the same set the answer key highlights.
+  let list='<div class="wslist"><h3>Find these words:</h3><div class="wswords">'+data.placed.map(pl=>`<span>${pl.word}</span>`).join('')+'</div></div>';
   wrap.innerHTML=g+list; return wrap;
 }
 /* reading passage (single) */
@@ -421,7 +436,11 @@ function renderProblems(opt,data,showAns){
 function renderHeader(opt,isKey){
   const m=META()[opt.type]; const head=el('div','ws-head');
   const title=opt.title || m.label;
-  head.appendChild(el('h1','ws-title',`${title}${isKey?'<span class="key-badge">ANSWER KEY</span>':''}`));
+  // Defense in depth: the title can be user-entered, so set it via textContent
+  // (never innerHTML). The ANSWER KEY badge is trusted static markup, appended after.
+  const h1=el('h1','ws-title'); h1.textContent=title;
+  if(isKey) h1.insertAdjacentHTML('beforeend','<span class="key-badge">ANSWER KEY</span>');
+  head.appendChild(h1);
   if(opt.themeOn && window.THEMES)
     head.insertAdjacentHTML('beforeend', window.THEMES.headerDecor(opt.theme, opt.seed));
   if(opt.showName && !isKey)
