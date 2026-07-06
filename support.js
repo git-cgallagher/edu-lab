@@ -8,7 +8,7 @@
    Marked no-print, so it never appears on generated worksheets.
    ============================================================ */
 window.SUPPORT_LINKS = [
-  { label: 'Support us on Patreon', url: 'https://www.patreon.com/c/AppalachianCloud', emoji: '❤️' },
+  { label: 'Support us on Patreon', url: 'https://www.patreon.com/cw/AppalachianCloud', emoji: '❤️' },
 ];
 
 (function renderSupportLinks(){
