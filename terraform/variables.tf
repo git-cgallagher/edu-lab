@@ -15,14 +15,20 @@ variable "enable_custom_domain" {
   description = <<-EOT
     Two-phase custom-domain switch (DNS is manual in Cloudflare, so the ACM cert
     can't validate before the first apply):
-      false (default) — CloudFront serves the default *.cloudfront.net cert with
-                        no aliases. Use for the FIRST apply; it provisions
-                        immediately and emits acm_validation_records.
-      true            — attach the custom domain alias + validated ACM cert.
-                        Set this AFTER the cert shows Issued in ACM, then re-apply.
+      false — CloudFront serves the default *.cloudfront.net cert with no aliases.
+              Set this ONLY for the very FIRST apply of a brand-new distribution
+              (before the ACM cert is Issued); it provisions immediately and emits
+              acm_validation_records.
+      true (default) — attach the custom domain alias + validated ACM cert. This is
+              the STEADY STATE, and the default: the live site is already launched on
+              edulab.appalachiancloud.co with the ACM cert Issued. It defaults to true
+              because there is NO committed tfvars to hold this toggle — defaulting to
+              false previously caused every subsequent `terraform plan/apply` to
+              silently revert the live custom domain to the default cert + TLSv1.
+              Only flip to false for a genuine from-scratch re-bootstrap.
   EOT
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "github_repo" {
