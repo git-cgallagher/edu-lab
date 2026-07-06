@@ -266,11 +266,13 @@ data "aws_iam_policy_document" "github_assume_role" {
       values   = ["sts.amazonaws.com"]
     }
 
-    # Scope trust to this repository only (any branch/tag/PR).
+    # Scope trust to this repo's main branch only. The deploy job is gated to
+    # `if: github.ref == 'refs/heads/main'`, so no other ref needs this role;
+    # `:*` would let any branch/tag/PR that gains id-token assume it.
     condition {
-      test     = "StringLike"
+      test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:sub"
-      values   = ["repo:${var.github_repo}:*"]
+      values   = ["repo:${var.github_repo}:ref:refs/heads/main"]
     }
   }
 }
