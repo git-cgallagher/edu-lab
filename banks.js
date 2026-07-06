@@ -43,7 +43,7 @@ const SUFFIXES = [
   ['-ful','full of','joyful'],['-less','without','fearless'],['-able','able to be','readable'],
   ['-er','one who / more','teacher'],['-est','most','tallest'],['-ly','in a way','quickly'],
   ['-ness','state of','kindness'],['-ment','action / result','movement'],['-tion','act of','action'],
-  ['-y','having','rainy'],['-ous','full of','famous'],['-able','can be done','washable'],
+  ['-y','having','rainy'],['-ous','full of','famous'],
 ];
 /* ---------- Parts of speech (word -> pos) ---------- */
 const POS = {
@@ -83,11 +83,11 @@ const SENTENCES = [
 ];
 /* ---------- Spelling word lists by grade ---------- */
 const SPELLING = {
-  2:['because','friend','school','please','little','happy','water','because','about','there',
+  2:['because','friend','school','please','little','happy','water','about','there',
      'their','where','which','would','people','animal','family','pretty','color','jumped'],
   3:['through','believe','different','enough','beautiful','favorite','important','probably','remember','special',
      'between','knowledge','neighbor','science','straight','thought','weather','answer','calendar','height'],
-  4:['necessary','separate','definitely','interrupt','rhythm','sincerely','possession','tomorrow','vacuum','library',
+  4:['necessary','separate','definitely','interrupt','rhythm','sincerely','possession','tomorrow','library',
      'February','government','restaurant','vegetable','Wednesday','beginning','character','difference','experience','familiar'],
   5:['accommodate','conscience','embarrass','exaggerate','mischievous','perseverance','privilege','recommend','twelfth','vacuum',
      'acquaintance','bureaucracy','camouflage','dilemma','fluorescent','guarantee','liaison','millennium','occurrence','questionnaire'],
