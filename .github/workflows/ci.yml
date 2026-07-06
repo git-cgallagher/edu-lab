@@ -91,6 +91,7 @@ jobs:
         run: |
           aws s3 sync . s3://${{ vars.S3_BUCKET }} \
             --delete \
+            --exclude ".claude/*" \
             --exclude ".git/*" \
             --exclude ".github/*" \
             --exclude "terraform/*" \
