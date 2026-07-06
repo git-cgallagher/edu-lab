@@ -45,22 +45,40 @@ const G = (opt)=>Number(opt.grade);
 /* ============================================================
    CORE ARITHMETIC
    ============================================================ */
+// Dedup is on for every grade. K/G1 draw from a small operand range, so the number of
+// distinct problems is tiny (e.g. K addition, operands 0–5, has only 21). TYPE_META asks
+// for 48, which previously produced ~40% duplicates because dedup was disabled below G2.
+// We now cap the target to the distinct-problem space for those grades so the sheet fills
+// with unique problems instead of padding with repeats. Higher grades are unaffected
+// (their operand space dwarfs any requested count, so the cap never bites).
+function tri(n){ return (n+1)*(n+2)/2; } // # of unordered pairs {a,b} with 0<=a,b<=n
 function genAddition(R, opt){
-  const g=G(opt), dd=g>=2; const probs=[], seen=new Set(); const [r1,r2]=digitRange(opt.digits); let guard=0;
-  while(probs.length<opt.count && guard++<opt.count*60){
-    let a=R.int(r1.min,r1.max), b=R.int(r2.min,r2.max);
-    if(g<=1){ const cap=g===0?5:10; a=R.int(0,cap); b=R.int(0,cap); }   // K within 10, G1 within 20
-    const k=a<b?a+'+'+b:b+'+'+a; if(dd){ if(seen.has(k))continue; seen.add(k); }
+  const g=G(opt); const probs=[], seen=new Set(); const [r1,r2]=digitRange(opt.digits);
+  const cap = g===0?5 : g===1?10 : null;             // K within 5, G1 within 10
+  const count = cap===null ? opt.count : Math.min(opt.count, tri(cap));
+  let guard=0;
+  while(probs.length<count && guard++<count*60){
+    let a,b;
+    if(cap===null){ a=R.int(r1.min,r1.max); b=R.int(r2.min,r2.max); }
+    else { a=R.int(0,cap); b=R.int(0,cap); }
+    const k=a<b?a+'+'+b:b+'+'+a;
+    if(seen.has(k))continue; seen.add(k);
     probs.push({a,b,op:'+',answer:a+b});
   } return probs;
 }
 function genSubtraction(R, opt){
-  const g=G(opt), dd=g>=2; const probs=[], seen=new Set(); const [r1,r2]=digitRange(opt.digits); let guard=0;
-  while(probs.length<opt.count && guard++<opt.count*60){
-    let a=R.int(r1.min,r1.max), b=R.int(r2.min,r2.max);
-    if(g<=1){ const cap=g===0?10:20; a=R.int(0,cap); b=R.int(0,a); }
-    if(a<b)[a,b]=[b,a]; if(opt.difficulty==='easy'&&a===b&&dd)continue;
-    const k=a+'-'+b; if(dd){ if(seen.has(k))continue; seen.add(k); }
+  const g=G(opt); const probs=[], seen=new Set(); const [r1,r2]=digitRange(opt.digits);
+  const cap = g===0?10 : g===1?20 : null;            // K within 10, G1 within 20 (minuend)
+  const count = cap===null ? opt.count : Math.min(opt.count, tri(cap)); // pairs 0<=b<=a<=cap
+  let guard=0;
+  while(probs.length<count && guard++<count*60){
+    let a,b;
+    if(cap===null){
+      a=R.int(r1.min,r1.max); b=R.int(r2.min,r2.max); if(a<b)[a,b]=[b,a];
+      if(opt.difficulty==='easy'&&a===b)continue;    // G2+ easy: skip trivial n − n = 0
+    } else { a=R.int(0,cap); b=R.int(0,a); }
+    const k=a+'-'+b;
+    if(seen.has(k))continue; seen.add(k);
     probs.push({a,b,op:'−',answer:a-b});
   } return probs;
 }
