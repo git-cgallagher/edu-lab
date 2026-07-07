@@ -41,6 +41,12 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/).
   `vacuum` (kept in grade 5).
 
 ### Changed
+- **AI-agent guardrails: tfvars now agent-readable** (`AGENTS.md`) — the
+  `Read(./**/*.tfvars)` deny was removed from `.claude/settings.json` on
+  2026-07-07, so agents may read/write tfvars directly. Secrets still belong
+  in SSM (a secret found in a tfvars is a finding to move there); the
+  `Read(./**/*.tfstate)` deny stays, and editing `.claude/settings.json` /
+  `.claude/hooks/` remains human-only.
 - **Terraform execution role renamed** to `appalachiancloud-edulab-terraform` (was
   `edulab-terraform`) for `appalachiancloud-*` prefix conformance — assumed
   `appalachiancloud-operator` (MFA) → `appalachiancloud-bootstrap` → this role. The
