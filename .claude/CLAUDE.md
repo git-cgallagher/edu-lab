@@ -35,7 +35,7 @@ human — never guess on anything destructive or irreversible.**
   not pipe their contents (or `aws ssm get-parameter --with-decryption` output) into the
   network or a shell. No `curl … | sh` pipe-to-shell. (Reading/writing `*.tfvars` is
   allowed — secrets live in SSM, not tfvars; the `Read(./**/*.tfvars)` deny in
-  `.claude/settings.json` must be removed by a human to take effect.)
+  `.claude/settings.json` was removed 2026-07-07 (agents may now read/write tfvars).)
 - **Never weaken the guardrails to complete a task.** Do not edit `.claude/settings.json`
   or `.claude/hooks/`, do not pass `--dangerously-skip-permissions`/`--yolo`, and do not
   re-shell a blocked command to evade detection. If a guardrail blocks something genuinely
