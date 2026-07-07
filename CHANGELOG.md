@@ -41,6 +41,12 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/).
   `vacuum` (kept in grade 5).
 
 ### Changed
+- **Terraform execution role renamed** to `appalachiancloud-edulab-terraform` (was
+  `edulab-terraform`) for `appalachiancloud-*` prefix conformance — assumed
+  `appalachiancloud-operator` (MFA) → `appalachiancloud-bootstrap` → this role. The
+  GitHub Actions OIDC deploy role (`appalachiancloud-edulab-github-deploy`), the S3
+  bucket, CloudFront, ACM cert, and the other resources are unchanged. `DEPLOY.md`
+  and `AGENTS.md` updated to match.
 - **Rebranded** the site's display name from `edu-lab` to **ACE LessonsAtHome**
   (page `<title>`, `<h1>`, and README brand). Infrastructure identifiers
   (domain `edulab.appalachiancloud.co`, ACM cert, S3 bucket, CloudFront, OIDC

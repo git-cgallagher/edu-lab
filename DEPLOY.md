@@ -24,11 +24,11 @@ the Cloudflare dashboard by hand.
 
 - [aws-vault](https://github.com/99designs/aws-vault) configured with **two**
   profiles:
-  - `mountain-admin` (or your admin IAM user) — to apply `aws-account-baseline`,
+  - `account-admin` (or the AWS root user at genesis) — to apply `aws-account-baseline`,
     which creates the edu-lab execution role.
   - `edulab-terraform` — assumes
-    `arn:aws:iam::651120422878:role/edulab-terraform` (created by the baseline,
-    below). This is the role that applies THIS stack — `mountain-terraform`
+    `arn:aws:iam::651120422878:role/appalachiancloud-edulab-terraform` (created by the
+    baseline, below). This is the role that applies THIS stack — `mountain-terraform`
     deliberately cannot create IAM roles, which is why the first apply failed
     with `iam:CreateRole ... AccessDenied`.
 - [Terraform](https://developer.hashicorp.com/terraform) >= 1.10 (S3-native
@@ -40,35 +40,38 @@ the Cloudflare dashboard by hand.
 ### One-time: create the edu-lab execution role
 
 The edu-lab stack needs its own least-privilege Terraform identity (one exec
-role per stack, matching `boss-bos-terraform`). It is defined in
-`aws-account-baseline/terraform/edulab-terraform.tf`. Apply the baseline as your
-**admin** user:
+role per stack, matching `appalachiancloud-bossbos-terraform`). It is defined in
+`aws-account-baseline/terraform/edulab-terraform.tf`. Apply the baseline as
+`account-admin` (or, on a fresh account, the AWS root genesis apply):
 
 ```bash
 cd ../aws-account-baseline/terraform   # adjust path to the baseline repo
-aws-vault exec mountain-admin -- terraform init
-aws-vault exec mountain-admin -- terraform apply   # creates role: edulab-terraform
-aws-vault exec mountain-admin -- terraform output -raw edulab_terraform_role_arn
+aws-vault exec account-admin -- terraform init
+aws-vault exec account-admin -- terraform apply   # creates role: appalachiancloud-edulab-terraform
+aws-vault exec account-admin -- terraform output -raw edulab_terraform_role_arn
 ```
 
 Add an aws-vault profile that assumes it (in `~/.aws/config`):
 
 ```ini
 [profile edulab-terraform]
-source_profile = tmp-admin                                # or your permanent IAM user
-role_arn       = arn:aws:iam::651120422878:role/edulab-terraform
-mfa_serial     = arn:aws:iam::651120422878:mfa/<your-device>
+source_profile = bootstrap                                # operator → bootstrap → this exec role
+role_arn       = arn:aws:iam::651120422878:role/appalachiancloud-edulab-terraform
 ```
 
-> `mfa_serial` MUST be set on each role profile — it is NOT inherited from
-> `source_profile`. Without it, aws-vault does a no-MFA `AssumeRole` and the role
-> trust denies. (See `~/Code/ALIGNMENT-CHECKLIST.md` Phase 2 for the history.)
+> The MFA gate is on the **operator → bootstrap** leg. Define the `operator` (base)
+> and `bootstrap` profiles per `aws-account-baseline/AGENTS.md`; the `bootstrap`
+> profile carries `mfa_serial`, so `aws-vault exec edulab-terraform` prompts for MFA
+> once when it assumes bootstrap, then chains into this exec role (which trusts
+> bootstrap — no second MFA). `mfa_serial` is NOT inherited across a `source_profile`
+> chain, so it must live on the profile that assumes bootstrap. (See
+> `~/Code/ALIGNMENT-CHECKLIST.md` Phase 2 for the history.)
 
 Sanity check before applying the app stack:
 
 ```bash
 aws-vault exec edulab-terraform -- aws sts get-caller-identity
-# Expect account 651120422878, assumed-role/edulab-terraform
+# Expect account 651120422878, assumed-role/appalachiancloud-edulab-terraform
 ```
 
 ---
@@ -79,7 +82,7 @@ The shared S3 state backend (`appalachiancloud-tfstate-651120422878`) is
 provisioned by aws-account-baseline with **S3-native locking** (no DynamoDB
 table), so `init` just connects to it.
 
-Run the app stack with the **edulab-terraform** role (NOT mountain-terraform):
+Run the app stack with the **`edulab-terraform`** profile — the `appalachiancloud-edulab-terraform` role, NOT `mountain-terraform`:
 
 ```bash
 cd terraform
