@@ -20,7 +20,7 @@
   justify-content: center;
   gap: 10px;
   /* tint toward the accent but stay light so it reads as decoration */
-  color: var(--accent, #2563eb);
+  color: var(--accent, #1F6FA5);
   opacity: 0.55;
   pointer-events: none;
   margin: 2px 0;
@@ -46,7 +46,7 @@
   bottom: 10px;
   width: 36px;
   height: 36px;
-  color: var(--accent, #2563eb);
+  color: var(--accent, #1F6FA5);
   opacity: 0.35;
   pointer-events: none;
   z-index: 0;

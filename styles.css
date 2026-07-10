@@ -1,10 +1,26 @@
 /* ============================================================
-   ACE LessonsAtHome Worksheet Generator — styles
+   LessonsAtHome Worksheet Generator — styles
    Screen UI + print rules tuned for 8.5x11 US Letter
+
+   Brand tokens are the single source of truth for the warm skin.
+   Rule (see BRAND.md): brand hue is NEVER the sole signal, and the
+   decorative tokens (--sky, --sun) are NEVER used for text, focus
+   rings, or essential borders — they fail WCAG AA as text. A recolor
+   must also touch styles.css:~192 (word-search hit), themes.css
+   fallbacks, app.js SVG fills, and the index.html inline favicon.
    ============================================================ */
 :root{
-  --bg:#f4f6fb; --panel:#fff; --ink:#1f2733; --muted:#6b7280;
-  --line:#d7dce5; --accent:#2563eb; --accent-d:#1d4ed8; --soft:#eef2ff;
+  --bg:#FAFAF5;       /* Cloud White — page background */
+  --panel:#fff;
+  --ink:#172A38;      /* body text — 14.1:1 on --bg (AAA) */
+  --label:#33414F;    /* form labels / chrome — ~10:1 (AAA) */
+  --muted:#5C6773;    /* secondary text — 5.5:1 (AA) */
+  --line:#dfe3e8;     /* hairlines (neutral) */
+  --soft:#E7F4FB;     /* pale sky tint — fills only */
+  --accent:#1F6FA5;   /* links / buttons / answers — 5.2:1 on --bg, 5.4:1 white-on (AA) */
+  --accent-d:#155A87; /* hover — 7.4:1 white-on (AAA) */
+  --sky:#3DA5D9;      /* DECORATION ONLY — 2.65:1, never text */
+  --sun:#FFC93C;      /* DECORATION / fill ONLY — pair only with --ink (9.6:1) */
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
@@ -20,10 +36,13 @@ body{
   border-right:1px solid var(--line); position:sticky; top:0;
   height:100vh; overflow-y:auto;
 }
-.controls h1{font-size:20px; margin:0}
+/* Rounded display stack = the warm-skin signal (zero-file: no web font,
+   no CSP change). Scoped to the sidebar title so it never prints on a sheet.
+   Follow-up: self-host a subset Baloo 2 .woff2 (font-src 'self' already allows it). */
+.controls h1{font-size:22px; margin:0; font-family:ui-rounded,"SF Pro Rounded","Baloo 2",system-ui,sans-serif; color:var(--accent-d)}
 .controls .sub{margin:2px 0 18px; color:var(--muted); font-size:13px}
 .field{display:flex; flex-direction:column; gap:4px; margin-bottom:14px; font-size:13px}
-.field > span{font-weight:600; color:#374151}
+.field > span{font-weight:600; color:var(--label)}
 .field select,.field input[type=text],.field input[type=number]{
   padding:8px 10px; border:1px solid var(--line); border-radius:8px;
   font-size:14px; background:#fff; color:var(--ink);
@@ -36,7 +55,7 @@ body{
 .field.check input{width:20px; height:20px; margin-top:4px}
 .subfield{display:flex; flex-direction:column; gap:4px; margin:10px 0 0; font-size:12px}
 .subfield.check2{flex-direction:row; align-items:center; gap:8px}
-details summary{cursor:pointer; font-weight:600; color:#374151; font-size:13px}
+details summary{cursor:pointer; font-weight:600; color:var(--label); font-size:13px}
 details{border:1px dashed var(--line); border-radius:8px; padding:10px}
 .actions{display:flex; gap:10px; margin-top:6px}
 button{
@@ -58,6 +77,22 @@ button.primary:hover{background:var(--accent-d)}
   color:var(--accent); background:#fff;
 }
 .support-link:hover{background:var(--soft); border-color:var(--accent)}
+/* Collapse the divider when no support links are active (empty SUPPORT_LINKS). */
+.support:empty{display:none; margin:0; padding:0; border:0}
+
+/* ---------- Endorsement signature ("an Appalachian Cloud project") ---------- */
+.endorse{margin-top:12px; font-size:12px; color:var(--muted); text-align:center}
+.endorse a{color:var(--accent); text-decoration:underline}   /* 5.2:1 + underlined: passes WCAG 1.4.1 */
+.endorse a:hover{color:var(--accent-d)}
+
+/* ---------- Accessibility: visible focus + reduced motion ---------- */
+:where(button,select,input,a,summary,details):focus-visible{
+  outline:3px solid var(--ink); outline-offset:2px; border-radius:8px;
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important; animation-iteration-count:1 !important;
+    transition-duration:.01ms !important; scroll-behavior:auto !important}
+}
 
 /* ---------- Page / sheet ---------- */
 .page-wrap{flex:1; padding:24px; display:flex; justify-content:center}
@@ -69,7 +104,7 @@ button.primary:hover{background:var(--accent-d)}
 /* worksheet header */
 .ws-head{border-bottom:2px solid var(--ink); padding-bottom:8px; margin-bottom:14px}
 .ws-title{font-size:22px; font-weight:800; margin:0}
-.ws-meta{display:flex; justify-content:space-between; font-size:13px; color:#374151; margin-top:8px}
+.ws-meta{display:flex; justify-content:space-between; font-size:13px; color:var(--ink); margin-top:8px}
 .ws-meta .line{border-bottom:1px solid var(--ink); min-width:160px; display:inline-block}
 .ws-sub{font-size:12px; color:var(--muted); margin-top:4px}
 .key-badge{display:inline-block; background:#fde68a; color:#92400e; font-size:11px;
@@ -84,7 +119,7 @@ button.primary:hover{background:var(--accent-d)}
 .prob .pnum{align-self:flex-start; font-size:10px; color:var(--muted); line-height:1}
 .prob .stack{font-variant-numeric:tabular-nums; font-size:18px; text-align:right; line-height:1.25}
 .prob .op-row{display:flex; gap:6px; justify-content:flex-end}
-.prob .op{color:#374151}
+.prob .op{color:var(--ink)}
 .prob .rule{border-bottom:2px solid var(--ink); width:100%; margin-top:2px}
 .prob .ans{height:22px; width:100%; text-align:right; color:var(--accent); font-weight:700; font-size:18px}
 
@@ -177,7 +212,7 @@ button.primary:hover{background:var(--accent-d)}
 .geo-q{font-size:12px; margin-top:4px; font-weight:600}
 
 /* ---------- vocab match ---------- */
-.match-wrap .instr{font-size:13px; color:#374151; margin:0 0 10px}
+.match-wrap .instr{font-size:13px; color:var(--label); margin:0 0 10px}
 .match-cols{display:flex; gap:28px}
 .match-col{flex:1}
 .match-col h3{font-size:14px; margin:0 0 8px; border-bottom:1px solid var(--line); padding-bottom:4px}
@@ -187,9 +222,9 @@ button.primary:hover{background:var(--accent-d)}
 
 /* ---------- word search ---------- */
 .wsgrid{border-collapse:collapse; margin:0 auto}
-.wsgrid td{border:1px solid #e5e7eb; width:24px; height:24px; text-align:center; font-size:13px;
+.wsgrid td{border:1px solid var(--line); width:24px; height:24px; text-align:center; font-size:13px;
   font-family:"Courier New",monospace; font-weight:600}
-.wsgrid td.wshit{background:#bfdbfe; color:#1d4ed8}
+.wsgrid td.wshit{background:#CDE9F7; color:var(--accent-d)}
 .wslist{margin-top:14px}
 .wslist h3{font-size:14px; margin:0 0 6px}
 .wswords{display:flex; flex-wrap:wrap; gap:6px 16px}

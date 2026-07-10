@@ -1,4 +1,4 @@
-# ACE LessonsAtHome
+# LessonsAtHome
 
 > **Printable worksheets for curious kids, in seconds.**
 
@@ -8,21 +8,24 @@ A fast, free educational worksheet generator for grades K–5. Pick a grade,
 subject, and theme — get a clean, print-ready worksheet (plus answer key) in
 your browser. No accounts, no tracking, no build step.
 
-If it's useful to your family or classroom, you can
-[**support us on Patreon**](https://www.patreon.com/cw/AppalachianCloud) — there's
-a link in the app sidebar too.
+LessonsAtHome is **an Appalachian Cloud project** — the free, family-facing
+sibling of [Appalachian Cloud Engineering](https://appalachiancloud.co).
 
 ---
 
 ## Brand
 
+Canonical brand spec: **[BRAND.md](BRAND.md)**. Canonical tokens live in
+`styles.css :root`. The values below mirror what actually ships.
+
 | | |
 |---|---|
-| **Name** | ACE LessonsAtHome |
+| **Name** | LessonsAtHome *(display only; repo/infra stay `edu-lab`/`edulab`)* |
+| **Family** | an Appalachian Cloud project — <https://appalachiancloud.co> |
 | **Tagline** | Printable worksheets for curious kids, in seconds. |
 | **Audience** | Parents & teachers of grades K–5 |
-| **Palette** | Sunshine Yellow `#FFC93C` · Sky Blue `#3DA5D9` on Cloud White `#FAFAF5` |
-| **Font** | [Baloo 2](https://fonts.google.com/specimen/Baloo+2) (display) · system sans (body) |
+| **Palette** | Text/UI accent `#1F6FA5` (WCAG AA) on Cloud White `#FAFAF5`; Sky Blue `#3DA5D9` + Sunshine `#FFC93C` are **decoration only** (fail AA as text) |
+| **Font** | Rounded system display stack (`ui-rounded`/`SF Pro Rounded`) for the app title · system sans body. *Follow-up: self-host a subset [Baloo 2](https://fonts.google.com/specimen/Baloo+2) `.woff2`.* |
 | **Domain** | `edulab.appalachiancloud.co` |
 
 ---
@@ -93,7 +96,7 @@ edu-lab/
 ├── stem.js          # STEM generators (self-registers onto window.WS)
 ├── banks.js         # Themed word banks (space, animals, ocean, dinosaurs, …)
 ├── themes.js        # Theme metadata + decorate helpers
-├── support.js       # Data-driven "support the project" links (Patreon, …)
+├── support.js       # Data-driven "support the project" links (empty until a support page is live)
 ├── styles.css       # Brand + layout + print styles
 ├── themes.css       # Per-theme visual accents
 ├── stem.css         # STEM worksheet styles
@@ -113,7 +116,7 @@ edu-lab/
 
 Scripts load in dependency order in `index.html` (`banks.js` → `generator.js` → `themes.js` → `stem.js` → `support.js` → `app.js`). Everything self-registers onto `window` — no bundler, no imports.
 
-To add or change support links, edit the `SUPPORT_LINKS` array in `support.js` — entries render automatically into the sidebar footer.
+To add or change support links, edit the `SUPPORT_LINKS` array in `support.js` — entries render automatically into the sidebar footer. It currently ships **empty** (no public support page exists yet); see the re-enable criteria in `support.js`.
 
 ---
 
@@ -134,4 +137,4 @@ See **[DEPLOY.md](DEPLOY.md)** for the full, copy-pasteable runbook:
 
 ## License
 
-MIT — see [LICENSE](LICENSE). Copyright © 2026 Chris Gallagher.
+MIT — see [LICENSE](LICENSE). Copyright © 2026 Appalachian Cloud Engineering, LLC.

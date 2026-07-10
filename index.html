@@ -3,30 +3,51 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ACE LessonsAtHome · Worksheet Generator</title>
+<title>K-5 Printable Worksheets &amp; Answer Keys — LessonsAtHome</title>
 <meta name="description" content="Free printable K-5 worksheet generator. Create math, language arts, reading, and STEM practice pages with matching answer keys, adjustable difficulty, and reproducible seeds, ready to print in seconds.">
+<meta name="theme-color" content="#3DA5D9">
 <link rel="canonical" href="https://edulab.appalachiancloud.co/">
 <!-- Inline SVG favicon (brand mark). CSP img-src allows 'self' data:, so no external file needed. -->
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='7'%20fill='%232563eb'/%3E%3Ctext%20x='16'%20y='23'%20font-family='sans-serif'%20font-size='21'%20font-weight='700'%20text-anchor='middle'%20fill='%23fff'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='7'%20fill='%233DA5D9'/%3E%3Ctext%20x='16'%20y='23'%20font-family='sans-serif'%20font-size='21'%20font-weight='700'%20text-anchor='middle'%20fill='%23fff'%3EA%3C/text%3E%3C/svg%3E">
 <!-- Open Graph -->
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="ACE LessonsAtHome">
-<meta property="og:title" content="ACE LessonsAtHome · Worksheet Generator">
+<meta property="og:site_name" content="LessonsAtHome">
+<meta property="og:title" content="K-5 Printable Worksheets &amp; Answer Keys — LessonsAtHome">
 <meta property="og:description" content="Printable K-5 math, language arts, reading, and STEM worksheets with answer keys. Generate, seed, and print in seconds.">
 <meta property="og:url" content="https://edulab.appalachiancloud.co/">
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ACE LessonsAtHome · Worksheet Generator">
+<meta name="twitter:title" content="K-5 Printable Worksheets &amp; Answer Keys — LessonsAtHome">
 <meta name="twitter:description" content="Printable K-5 math, language arts, reading, and STEM worksheets with answer keys. Generate, seed, and print in seconds.">
 <link rel="stylesheet" href="styles.css">
 <link rel="stylesheet" href="themes.css">
 <link rel="stylesheet" href="stem.css">
+<!-- Structured data: type="application/ld+json" is a non-executable data block,
+     so script-src 'self' does not apply. Keeps the zero-third-party posture. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "LessonsAtHome",
+  "url": "https://edulab.appalachiancloud.co/",
+  "applicationCategory": "EducationalApplication",
+  "operatingSystem": "Any (web browser)",
+  "description": "Free printable K-5 worksheet generator for math, language arts, reading, and STEM, with matching answer keys.",
+  "isAccessibleForFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Appalachian Cloud Engineering, LLC",
+    "url": "https://appalachiancloud.co"
+  }
+}
+</script>
 </head>
 <body>
 <div class="app">
   <!-- ============ CONTROL PANEL ============ -->
   <aside class="controls no-print" id="controls">
-    <h1>ACE LessonsAtHome</h1>
+    <h1>LessonsAtHome</h1>
     <p class="sub">Worksheet generator · Grades K&ndash;5</p>
 
     <label class="field">
@@ -122,6 +143,10 @@
     <p class="tip no-print">Tip: same seed + same settings = identical sheet, so a key always matches.</p>
 
     <footer class="support no-print" id="support"><!-- populated by support.js --></footer>
+
+    <p class="endorse no-print">
+      <a href="https://appalachiancloud.co/" target="_blank" rel="noopener noreferrer">an Appalachian Cloud project</a>
+    </p>
   </aside>
 
   <!-- ============ WORKSHEET OUTPUT ============ -->
