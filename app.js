@@ -178,7 +178,7 @@ function renderFractions(probs,showAns){
       // partitioned bar
       let bar='<svg viewBox="0 0 160 30" class="fbar">';
       const w=160/p.den;
-      for(let k=0;k<p.den;k++){ bar+=`<rect x="${k*w}" y="0" width="${w}" height="28" fill="${k<p.num?'#bfdbfe':'#fff'}" stroke="#1f2733"/>`; }
+      for(let k=0;k<p.den;k++){ bar+=`<rect x="${k*w}" y="0" width="${w}" height="28" fill="${k<p.num?'#CDE9F7':'#fff'}" stroke="#172A38"/>`; }
       bar+='</svg>';
       body.innerHTML=`${bar}<div class="fq">What fraction is shaded? ${showAns?'<b class="ansblue">'+p.answer+'</b>':'<span class="blank"></span>'}</div>`;
     } else if(p.render==='equiv'){
@@ -228,7 +228,7 @@ function shapeSVG(p){
   return `<svg viewBox="0 0 150 110" class="shp">
     <rect x="20" y="35" width="80" height="50" fill="#eff6ff" stroke="#1f2733" stroke-width="2"/>
     <polygon points="20,35 45,15 125,15 100,35" fill="#dbeafe" stroke="#1f2733" stroke-width="2"/>
-    <polygon points="100,35 125,15 125,65 100,85" fill="#bfdbfe" stroke="#1f2733" stroke-width="2"/>
+    <polygon points="100,35 125,15 125,65 100,85" fill="#CDE9F7" stroke="#172A38" stroke-width="2"/>
     <text x="60" y="100" font-size="11" text-anchor="middle">l ${p.l}</text>
     <text x="118" y="55" font-size="11" text-anchor="middle">w ${p.w}</text>
     <text x="135" y="42" font-size="11" text-anchor="middle">h ${p.h}</text></svg>`;
@@ -252,7 +252,7 @@ function clockSVG(h,m){
   const ma=(m/60)*2*Math.PI-Math.PI/2, ha=((h%12)/12+m/720)*2*Math.PI-Math.PI/2;
   return `<svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54" fill="#fff" stroke="#1f2733" stroke-width="2.5"/>${t.join('')}
     <line x1="60" y1="60" x2="${(cx+Math.cos(ha)*r*0.5).toFixed(1)}" y2="${(cy+Math.sin(ha)*r*0.5).toFixed(1)}" stroke="#1f2733" stroke-width="3.5" stroke-linecap="round"/>
-    <line x1="60" y1="60" x2="${(cx+Math.cos(ma)*r*0.78).toFixed(1)}" y2="${(cy+Math.sin(ma)*r*0.78).toFixed(1)}" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="60" y1="60" x2="${(cx+Math.cos(ma)*r*0.78).toFixed(1)}" y2="${(cy+Math.sin(ma)*r*0.78).toFixed(1)}" stroke="#3DA5D9" stroke-width="2.5" stroke-linecap="round"/>
     <circle cx="60" cy="60" r="3" fill="#1f2733"/></svg>`;
 }
 function renderClocks(probs,showAns){
@@ -438,9 +438,11 @@ function renderHeader(opt,isKey){
   const title=opt.title || m.label;
   // Defense in depth: the title can be user-entered, so set it via textContent
   // (never innerHTML). The ANSWER KEY badge is trusted static markup, appended after.
-  const h1=el('h1','ws-title'); h1.textContent=title;
-  if(isKey) h1.insertAdjacentHTML('beforeend','<span class="key-badge">ANSWER KEY</span>');
-  head.appendChild(h1);
+  // Worksheet title is an <h2>: the one page <h1> is the app title in the sidebar,
+  // so the outline stays h1 -> h2 -> h3 (WCAG 1.3.1 / 2.4.6).
+  const titleEl=el('h2','ws-title'); titleEl.textContent=title;
+  if(isKey) titleEl.insertAdjacentHTML('beforeend','<span class="key-badge">ANSWER KEY</span>');
+  head.appendChild(titleEl);
   if(opt.themeOn && window.THEMES)
     head.insertAdjacentHTML('beforeend', window.THEMES.headerDecor(opt.theme, opt.seed));
   if(opt.showName && !isKey)

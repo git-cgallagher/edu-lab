@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://edulab.appalachiancloud.co/sitemap.xml
