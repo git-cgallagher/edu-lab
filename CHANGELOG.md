@@ -6,6 +6,21 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 ## [Unreleased]
 
 ### Added
+- **Optional onboarding wizard** (`wizard.js`, #28) — a small, warm, **skippable**
+  modal greets first-time visitors, asks a few quick questions (grade, subject,
+  difficulty, optional theme) or offers one-tap "recipes", then pre-fills the
+  sidebar dropdowns and generates. It **reuses `app.js`'s generate path** (fires
+  `change` on the real `#subject`/`#type` controls — no duplicated generation
+  logic) and is a **pure progressive enhancement**: the generator works fully if
+  the wizard is skipped or `wizard.js` fails to load. Loads **last** in
+  `index.html` (after `app.js`), builds its own DOM, and is marked `no-print`.
+  Accessible: `role="dialog"`/`aria-modal`, focus-trap, `Esc` skips, focus is
+  restored on close, and animations honor `prefers-reduced-motion`. The
+  "don't greet me again" flag is `localStorage['lah_wizard_seen']` (local to the
+  browser only — not a cookie, never uploaded, so it keeps the no-account/
+  no-tracking promise literally true); a "Setup wizard" link in the sidebar
+  reopens it. Guards against dead-end subject+grade combos (e.g. Reading at
+  Kindergarten) by computing valid subjects per grade from the live `TYPE_META`.
 - **Support-link framework** (`support.js`) — data-driven "support the project"
   links rendered into the sidebar footer via the `SUPPORT_LINKS` array. Ships
   **empty** (no public support page exists yet — re-enable criteria are in the
