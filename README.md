@@ -41,6 +41,12 @@ Canonical brand spec: **[BRAND.md](BRAND.md)**. Canonical tokens live in
 - **STEM** — observation, sorting, simple logic, and measurement activities
 - **Answer keys** — auto-generated alongside each worksheet
 - **Print-ready** — dedicated print stylesheet; one click to print or Save-as-PDF
+- **Optional onboarding wizard** — a small, skippable modal greets first-time
+  visitors, asks a few quick questions (grade, subject, difficulty, theme) or
+  offers one-tap "recipes", then pre-fills the sidebar and generates. Skip it to
+  use the full generator directly; reopen it anytime from the sidebar. The
+  "don't greet me again" flag lives in `localStorage` (this browser only — not a
+  cookie, never uploaded), so it stays true to the no-account/no-tracking promise
 - **No-build, no-account** — plain HTML/CSS/JS; just open `index.html`
 
 ---
@@ -48,7 +54,11 @@ Canonical brand spec: **[BRAND.md](BRAND.md)**. Canonical tokens live in
 ## Using the site
 
 Open **<https://edulab.appalachiancloud.co>** (or `index.html` locally) — no
-account or sign-in. From the left sidebar:
+account or sign-in. A first visit greets you with an **optional setup wizard**:
+answer a few quick questions (or tap a one-tap "recipe") and it pre-fills the
+controls and generates a page — or click **"Skip — I'll set it up myself"** to go
+straight to the sidebar below. Reopen it anytime via the **Setup wizard** link at
+the top of the sidebar. From the left sidebar:
 
 1. **Subject** — Math, Language Arts, Reading, or STEM.
 2. **Worksheet type** — options update to match the subject + grade.
@@ -97,6 +107,7 @@ edu-lab/
 ├── banks.js         # Themed word banks (space, animals, ocean, dinosaurs, …)
 ├── themes.js        # Theme metadata + decorate helpers
 ├── support.js       # Data-driven "support the project" links (empty until a support page is live)
+├── wizard.js        # Optional, skippable onboarding modal (reuses app.js's generate path)
 ├── styles.css       # Brand + layout + print styles
 ├── themes.css       # Per-theme visual accents
 ├── stem.css         # STEM worksheet styles
@@ -114,7 +125,7 @@ edu-lab/
 └── README.md
 ```
 
-Scripts load in dependency order in `index.html` (`banks.js` → `generator.js` → `themes.js` → `stem.js` → `support.js` → `app.js`). Everything self-registers onto `window` — no bundler, no imports.
+Scripts load in dependency order in `index.html` (`banks.js` → `generator.js` → `themes.js` → `stem.js` → `support.js` → `app.js` → `wizard.js`). Everything self-registers onto `window` — no bundler, no imports. `wizard.js` loads **last** on purpose: it drives the existing sidebar controls and reuses `app.js`'s generate path, so it must run after `app.js` has wired its `change` listeners and rendered the first sheet.
 
 To add or change support links, edit the `SUPPORT_LINKS` array in `support.js` — entries render automatically into the sidebar footer. It currently ships **empty** (no public support page exists yet); see the re-enable criteria in `support.js`.
 
