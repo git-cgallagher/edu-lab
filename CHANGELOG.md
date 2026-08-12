@@ -5,6 +5,17 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Fixed
+- **Dependabot: removed the npm ecosystem block** (`.github/dependabot.yml`) —
+  the repo has no `package.json` (no-build static site), and contrary to the
+  old config comment Dependabot does **not** skip ecosystems with a missing
+  manifest: the weekly "npm_and_yarn in /." update job failed every Saturday
+  with `dependency_file_not_found: /package.json not found` (runs on
+  2026-07-12/19/26, 08-02, 08-09). GitHub Actions and Terraform update blocks
+  are unchanged, and Dependabot *security* updates (a repo setting) are
+  unaffected. Re-add an npm block in the same PR if a `package.json` ever
+  appears at the repo root.
+
 ### Added
 - **Optional onboarding wizard** (`wizard.js`, #28) — a small, warm, **skippable**
   modal greets first-time visitors, asks a few quick questions (grade, subject,
