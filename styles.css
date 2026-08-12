@@ -101,6 +101,17 @@ button.primary:hover{background:var(--accent-d)}
   box-shadow:0 2px 14px rgba(0,0,0,.12); border-radius:2px;
 }
 
+/* Narrow viewports (#31): stack controls above the preview and let the sheet —
+   which must keep its 8.5in print width — scroll inside .page-wrap instead of
+   widening the page body. Print output is untouched (@media print overrides). */
+@media (max-width:860px){
+  .app{flex-direction:column}
+  .controls{width:auto; flex:none; position:static; height:auto;
+    border-right:none; border-bottom:1px solid var(--line)}
+  .page-wrap{padding:12px; justify-content:flex-start; max-width:100%;
+    overflow-x:auto; -webkit-overflow-scrolling:touch}
+}
+
 /* worksheet header */
 .ws-head{border-bottom:2px solid var(--ink); padding-bottom:8px; margin-bottom:14px}
 .ws-title{font-size:22px; font-weight:800; margin:0}
