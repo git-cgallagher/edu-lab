@@ -1,6 +1,13 @@
 # Dependabot — weekly dependency updates for edu-lab.
-# Covers GitHub Actions and Terraform always; npm is included for if/when a
-# package.json is added (Dependabot skips ecosystems with no manifest).
+# Covers GitHub Actions and Terraform.
+#
+# npm is intentionally OMITTED: this is a no-build site with no package.json,
+# and Dependabot does NOT skip ecosystems with a missing manifest — it fails
+# the whole "npm_and_yarn" update job every week with
+# `dependency_file_not_found: /package.json not found`. If a package.json is
+# ever added at the repo root, re-add an npm ecosystem block here in the same
+# PR. (Dependabot *security* updates are a repo setting and are unaffected by
+# this file.)
 version: 2
 updates:
   # GitHub Actions used in .github/workflows/
@@ -11,15 +18,6 @@ updates:
     labels:
       - "dependencies"
       - "github-actions"
-
-  # npm — only acts if a package.json appears at the repo root
-  - package-ecosystem: "npm"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    labels:
-      - "dependencies"
-      - "javascript"
 
   # Terraform providers/modules under terraform/
   - package-ecosystem: "terraform"
