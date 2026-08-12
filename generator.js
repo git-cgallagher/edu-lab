@@ -384,7 +384,7 @@ function genCurrency(R, opt){
       for(let i=0;i<n;i++){const c=R.pick(small); items.push(c.kind); total+=c.value;}
       probs.push({mode:'count',items,answer:money(total)}); continue;
     }
-    const mode=opt.difficulty==='easy'?'count':(g>=3?R.pick(['count','count','change','add']):R.pick(['count','count','add']));
+    const mode=opt.difficulty==='easy'?'count':(g>=3?R.pick(['count','count','change','add','subtract']):R.pick(['count','count','add','subtract']));
     if(mode==='count'){
       const n=R.int(3,opt.difficulty==='hard'?7:5);
       const items=[]; let total=0;
@@ -399,6 +399,12 @@ function genCurrency(R, opt){
       const a=R.int(5,g>=3?999:50),b=R.int(5,g>=3?999:50);
       const q=`${money(a)} + ${money(b)} =`; if(seen.has(q))continue; seen.add(q);
       probs.push({mode:'text',q,answer:money(a+b)});
+    } else if(mode==='subtract'){
+      let a=R.int(5,g>=3?999:50),b=R.int(5,g>=3?999:50);
+      if(a===b)continue;                              // skip trivial n − n = 0
+      if(b>a){const t=a;a=b;b=t;}                     // keep the difference positive
+      const q=`${money(a)} − ${money(b)} =`; if(seen.has(q))continue; seen.add(q);
+      probs.push({mode:'text',q,answer:money(a-b)});
     } else {
       const price=R.int(10,g>=4?480:95);const paid=g>=4?500:100;
       const q=`You pay ${money(paid)} for an item that costs ${money(price)}. How much change?`;
