@@ -5,6 +5,7 @@ const $ = (id)=>document.getElementById(id);
 const els = {
   subject:$('subject'), type:$('type'), grade:$('grade'), difficulty:$('difficulty'),
   digits:$('digits'), digitField:$('digitField'), count:$('count'), countHint:$('countHint'),
+  coinAnswers:$('coinAnswers'), coinField:$('coinField'),
   seed:$('seed'), answerKey:$('answerKey'), title:$('title'), showName:$('showName'),
   theme:$('theme'), themeOn:$('themeOn'),
   generate:$('generate'), print:$('print'), seedInfo:$('seedInfo'), sheet:$('sheet'),
@@ -57,6 +58,7 @@ function readOpts(){
   return {
     type, subject:els.subject.value, grade:els.grade.value, difficulty:els.difficulty.value,
     digits:els.digits.value,
+    coinAnswers:els.coinAnswers?els.coinAnswers.checked:false,
     count:Math.max(1,Math.min(120,Number(els.count.value)||1)),
     seed:(els.seed.value.trim() || Math.floor(Math.random()*1e9).toString()),
     answerKey:els.answerKey.checked, title:els.title.value.trim(), showName:els.showName.checked,
@@ -66,6 +68,7 @@ function readOpts(){
 function syncControls(){
   const m=META()[els.type.value]; if(!m) return;
   els.digitField.style.display = (m.digits && Number(els.grade.value)>=2) ? '' : 'none';
+  if(els.coinField) els.coinField.style.display = (m.layout==='currency') ? '' : 'none';
   els.countHint.textContent = m.layout==='passage' ? 'Reading uses one passage per page.'
     : `Default ${m.defaultCount} for this type.`;
 }
@@ -306,7 +309,7 @@ function renderShapes(probs,showAns){
   }); return wrap;
 }
 /* coins & bills */
-function coinSVG(kind){
+function coinSVG(kind,scale=1){
   const C={
     quarter:{d:56,face:'#c9ccd1',edge:'#9aa0a6',t1:'25',t2:'CENTS',label:'QUARTER'},
     nickel:{d:50,face:'#c9ccd1',edge:'#9aa0a6',t1:'5',t2:'CENTS',label:'NICKEL'},
@@ -314,16 +317,16 @@ function coinSVG(kind){
     dime:{d:40,face:'#c9ccd1',edge:'#9aa0a6',t1:'10',t2:'CENTS',label:'DIME'},
   }[kind];
   const r=C.d/2, cx=r+2, cy=r+2, s=C.d+4;
-  return `<svg viewBox="0 0 ${s} ${s}" width="${C.d}" height="${C.d}" class="coin" role="img" aria-label="${C.label}">
+  return `<svg viewBox="0 0 ${s} ${s}" width="${C.d*scale}" height="${C.d*scale}" class="coin" role="img" aria-label="${C.label}">
     <circle cx="${cx}" cy="${cy}" r="${r}" fill="${C.face}" stroke="${C.edge}" stroke-width="2"/>
     <circle cx="${cx}" cy="${cy}" r="${r-3}" fill="none" stroke="${C.edge}" stroke-width="1" stroke-dasharray="2 2"/>
     <text x="${cx}" y="${cy-1}" font-size="${C.d*0.34}" font-weight="700" text-anchor="middle" fill="#3b3f45" font-family="Georgia,serif">${C.t1}¢</text>
     <text x="${cx}" y="${cy+C.d*0.26}" font-size="${C.d*0.13}" text-anchor="middle" fill="#5b6068" font-family="Georgia,serif">${C.t2}</text>
   </svg>`;
 }
-function billSVG(kind){
+function billSVG(kind,scale=1){
   const B={one:{v:'1',word:'ONE'},five:{v:'5',word:'FIVE'}}[kind];
-  return `<svg viewBox="0 0 110 50" width="92" height="42" class="bill" role="img" aria-label="${B.word} dollar bill">
+  return `<svg viewBox="0 0 110 50" width="${92*scale}" height="${42*scale}" class="bill" role="img" aria-label="${B.word} dollar bill">
     <rect x="1" y="1" width="108" height="48" rx="5" fill="#d7ecd9" stroke="#3a7d44" stroke-width="2"/>
     <rect x="6" y="6" width="98" height="38" rx="3" fill="none" stroke="#3a7d44" stroke-width="1"/>
     <circle cx="55" cy="25" r="14" fill="#eaf5eb" stroke="#3a7d44" stroke-width="1"/>
@@ -335,6 +338,12 @@ function billSVG(kind){
 }
 function renderCurrency(probs,showAns){
   const wrap=el('div','block-grid'); wrap.style.gridTemplateColumns='repeat(2,1fr)';
+  if(probs.some(p=>p.mode==='coins')){
+    const note = showAns
+      ? 'Coin answers: any combination with the correct total is correct — this key shows the fewest coins and bills.'
+      : 'For each answer, write how many of each coin (and bill) you would use.';
+    const n=el('div','coin-note',note); n.style.gridColumn='1 / -1'; wrap.appendChild(n);
+  }
   probs.forEach((p,i)=>{
     const c=el('div','block');
     if(p.mode==='count'){
@@ -342,6 +351,18 @@ function renderCurrency(probs,showAns){
       const tray=el('div','coin-tray');
       p.items.forEach(k=> tray.insertAdjacentHTML('beforeend', (k==='one'||k==='five')?billSVG(k):coinSVG(k)));
       c.appendChild(tray);
+      c.appendChild(el('div','work', showAns?`Total: <span class="ans">${p.answer}</span>`:'Total: $______'));
+    } else if(p.mode==='coins'){
+      c.appendChild(el('div',null,`<span class="pnum">${i+1}.</span>${p.q}`));
+      const row=el('div','coin-answer-row');
+      p.denoms.forEach(k=>{
+        const cell=el('span','coin-cell');
+        cell.insertAdjacentHTML('beforeend',(k==='one'||k==='five')?billSVG(k,0.55):coinSVG(k,0.55));
+        cell.insertAdjacentHTML('beforeend',
+          `<span class="coin-x">×</span><span class="coin-qty">${showAns?`<span class="ans">${p.coins[k]||0}</span>`:''}</span>`);
+        row.appendChild(cell);
+      });
+      c.appendChild(row);
       c.appendChild(el('div','work', showAns?`Total: <span class="ans">${p.answer}</span>`:'Total: $______'));
     } else {
       c.appendChild(el('div',null,`<span class="pnum">${i+1}.</span>${p.q}`));
@@ -479,6 +500,7 @@ els.type.addEventListener('change',()=>{ syncControls(); applyDefaultCount(); ge
 els.difficulty.addEventListener('change',generate);
 els.digits.addEventListener('change',generate);
 els.answerKey.addEventListener('change',generate);
+if(els.coinAnswers) els.coinAnswers.addEventListener('change',generate);
 els.showName.addEventListener('change',generate);
 if(els.theme) els.theme.addEventListener('change',generate);
 if(els.themeOn) els.themeOn.addEventListener('change',generate);

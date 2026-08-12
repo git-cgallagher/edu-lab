@@ -22,6 +22,17 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/).
   appears at the repo root.
 
 ### Added
+- **US currency: "Answer with coin pictures" option** — a sidebar checkbox
+  (`#coinAnswers`, visible only for the US currency type) that turns subtraction
+  and make-change answers into a write-in row of coin pictures: one of each
+  denomination (× ___ box each), so the child shows the answer as a coin
+  combination. Bills ($1/$5) join the row at Grade 3+ (subtraction reaches
+  $9.99 there); Grade 2 stays coins-only. The answer key fills the boxes with
+  the **fewest-coins** breakdown (greedy — optimal for US denominations) and
+  notes that any combination with the correct total is correct. Hidden-state
+  guard: mixed-review sheets strip the flag (`genMixed` forces
+  `coinAnswers:false`) so a checkbox left checked can't change mixed output.
+  No effect on `easy` difficulty (count-only, as before).
 - **US currency: subtraction problems** (`generator.js genCurrency`) — a new
   `subtract` mode (`$a − $b =`, difference always positive, trivial `n − n = 0`
   skipped) joins the existing `count`/`add`/`change` modes for Grade 2+ at
