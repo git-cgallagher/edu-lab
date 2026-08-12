@@ -6,6 +6,11 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 ## [Unreleased]
 
 ### Fixed
+- **Mobile horizontal overflow (#31)** — at narrow viewports (≤860px) the page
+  body scrolled sideways to ~1184px because `.sheet` keeps its fixed 8.5in print
+  width. New media query stacks the controls above the preview and gives
+  `.page-wrap` its own `overflow-x: auto` scroll container, so the page body
+  stays viewport-width. Print output unchanged (`@media print` still overrides).
 - **Dependabot: removed the npm ecosystem block** (`.github/dependabot.yml`) —
   the repo has no `package.json` (no-build static site), and contrary to the
   old config comment Dependabot does **not** skip ecosystems with a missing
