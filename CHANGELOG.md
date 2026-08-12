@@ -22,6 +22,11 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/).
   appears at the repo root.
 
 ### Added
+- **US currency: subtraction problems** (`generator.js genCurrency`) — a new
+  `subtract` mode (`$a − $b =`, difference always positive, trivial `n − n = 0`
+  skipped) joins the existing `count`/`add`/`change` modes for Grade 2+ at
+  medium/hard difficulty; `easy` stays count-only, matching how `add` is gated.
+  Renders through the existing `mode:'text'` path, so no `app.js` change.
 - **Optional onboarding wizard** (`wizard.js`, #28) — a small, warm, **skippable**
   modal greets first-time visitors, asks a few quick questions (grade, subject,
   difficulty, optional theme) or offers one-tap "recipes", then pre-fills the
