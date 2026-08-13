@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — LessonsAtHome</title>
+<meta name="description" content="Questions, corrections, or worksheet requests for LessonsAtHome? Send us a message.">
+<meta name="theme-color" content="#3DA5D9">
+<link rel="canonical" href="https://edulab.appalachiancloud.co/contact.html">
+<!-- Inline SVG favicon (brand mark). CSP img-src allows 'self' data:, so no external file needed. -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='7'%20fill='%233DA5D9'/%3E%3Ctext%20x='16'%20y='23'%20font-family='sans-serif'%20font-size='21'%20font-weight='700'%20text-anchor='middle'%20fill='%23fff'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+<style>
+/* Page-scoped layout on top of the app stylesheet (style-src allows inline styles).
+   Reuses the brand tokens from styles.css :root. */
+.contact-wrap{max-width:560px; margin:0 auto; padding:32px 20px}
+.contact-wrap h1{font-size:24px; font-family:ui-rounded,"SF Pro Rounded","Baloo 2",system-ui,sans-serif; color:var(--accent-d); margin:0 0 4px}
+.contact-wrap .sub{color:var(--muted); font-size:14px; margin:0 0 24px}
+.contact-form .field textarea{
+  padding:8px 10px; border:1px solid var(--line); border-radius:8px;
+  font-size:14px; background:#fff; color:var(--ink);
+  font-family:inherit; min-height:140px; resize:vertical;
+}
+.contact-form .cf-turnstile{margin-bottom:14px}
+/* Honeypot: hidden from humans, present for bots. Not display:none in an
+   inline style attr — CSP-safe class here, and some bots skip display:none. */
+.hp-field{position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden}
+.contact-status{min-height:1.4em; font-size:14px; color:var(--label); margin-top:12px}
+.contact-status.is-error{color:#8C2F1B}
+.back-link{display:inline-block; margin-bottom:20px; font-size:13px; color:var(--accent)}
+</style>
+<!-- Cloudflare Turnstile (implicit render): injects the cf-turnstile-response
+     token input into the form below. Allowed by the CloudFront CSP
+     (script-src + frame-src challenges.cloudflare.com — terraform/main.tf). -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+</head>
+<body>
+<div class="contact-wrap">
+  <a class="back-link" href="/">&larr; Back to the worksheet generator</a>
+  <h1>Contact us</h1>
+  <p class="sub">Questions, corrections, or worksheet requests &mdash; we read everything.</p>
+
+  <form id="contact-form" class="contact-form" novalidate>
+    <label class="field"><span>Your name</span>
+      <input type="text" name="name" maxlength="120" required autocomplete="name">
+    </label>
+    <label class="field"><span>Email (for our reply)</span>
+      <input type="text" name="email" inputmode="email" maxlength="200" required autocomplete="email">
+    </label>
+    <label class="field"><span>Message</span>
+      <textarea name="message" maxlength="5000" required></textarea>
+    </label>
+
+    <!-- Honeypot — humans never see it; a filled value is silently dropped server-side. -->
+    <label class="hp-field" aria-hidden="true">Company
+      <input type="text" name="company" tabindex="-1" autocomplete="off">
+    </label>
+
+    <div class="cf-turnstile" data-sitekey="0x4AAAAAADzeQ88tCkv53wR6"></div>
+
+    <div class="actions">
+      <button type="submit" class="primary">Send message</button>
+    </div>
+    <p class="contact-status" id="contact-status" role="status" aria-live="polite"></p>
+  </form>
+</div>
+
+<script src="contact.js"></script>
+</body>
+</html>
