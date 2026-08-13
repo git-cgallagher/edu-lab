@@ -130,9 +130,17 @@ resource "aws_acm_certificate" "site" {
 
 # Baseline security headers applied to every response. All defense-in-depth
 # for a static K-5 site with no user accounts, cookies, or sensitive data.
-# CSP: script-src 'self' only (no inline scripts in the app); style-src needs
+# CSP: script-src 'self' only for the app (no inline scripts); style-src needs
 # 'unsafe-inline' because app.js uses insertAdjacentHTML with inline style=
 # attributes for grid layouts.
+#
+# Contact-page exceptions (the ONLY third-party allowances — contact.html):
+#   script-src + frame-src challenges.cloudflare.com — the Turnstile widget
+#     (script + its challenge iframe; frame-src must be explicit or it falls
+#     back to default-src 'self' and the widget iframe is blocked).
+#   connect-src bep3iwibed.execute-api.us-east-1.amazonaws.com — the shared
+#     Appalachian Cloud contact relay (mountain-infra contact_api.tf). If that
+#     API is ever recreated its URL changes: update it here AND in contact.js.
 resource "aws_cloudfront_response_headers_policy" "site" {
   name    = "appalachiancloud-edulab-security-headers"
   comment = "Baseline security headers for edu-lab"
@@ -161,7 +169,7 @@ resource "aws_cloudfront_response_headers_policy" "site" {
       override   = true
     }
     content_security_policy {
-      content_security_policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"
+      content_security_policy = "default-src 'self'; script-src 'self' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; connect-src 'self' https://bep3iwibed.execute-api.us-east-1.amazonaws.com; frame-src 'self' https://challenges.cloudflare.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"
       override                = true
     }
   }

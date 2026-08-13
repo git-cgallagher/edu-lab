@@ -5,6 +5,19 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+- **Contact page (`contact.html` + `contact.js`)** — Turnstile-protected form
+  POSTing (urlencoded, no preflight) to the shared Appalachian Cloud contact
+  relay in mountain-infra (honeypot + server-side `siteverify` + SES; inbox
+  never appears client-side — no `mailto:` anywhere on the site). Reuses the
+  ACE Turnstile widget (root-domain hostname covers subdomains) and the ACE
+  inbox; mountain-infra pairs with this via its `contact_allowed_origins` CORS
+  change. CSP gains its only third-party allowances for this page
+  (`script-src`/`frame-src challenges.cloudflare.com`, `connect-src` the relay
+  origin — `terraform/main.tf`, **apply before merging**). Linked from the
+  sidebar footer; `sitemap.xml` updated; `ci.yml`'s no-cache + `?v=<sha>`
+  cache-bust step now loops over both HTML pages.
+
 ### Fixed
 - **Mobile horizontal overflow (#31)** — at narrow viewports (≤860px) the page
   body scrolled sideways to ~1184px because `.sheet` keeps its fixed 8.5in print
