@@ -374,9 +374,23 @@ function genTime(R, opt){
 const COINS=[{kind:'quarter',value:25},{kind:'dime',value:10},{kind:'nickel',value:5},{kind:'penny',value:1}];
 const BILLS=[{kind:'one',value:100},{kind:'five',value:500}];
 function money(c){return '$'+(c/100).toFixed(2);}
+/* Fewest coins/bills for an amount (greedy is optimal for US denominations).
+   Returns {kind:count} over the given denomination list. */
+const DENOMS=[{kind:'five',value:500},{kind:'one',value:100},
+  {kind:'quarter',value:25},{kind:'dime',value:10},{kind:'nickel',value:5},{kind:'penny',value:1}];
+function coinBreakdown(cents, denoms){
+  const out={};
+  for(const d of denoms){ out[d.kind]=Math.floor(cents/d.value); cents%=d.value; }
+  return out;
+}
 function genCurrency(R, opt){
   const probs=[], seen=new Set(); let guard=0; const g=G(opt);
   const useBills = g>=4;
+  // "Answer with coin pictures": bills join the answer row at G3+ (subtraction
+  // amounts reach $9.99 there); G2 stays coins-only.
+  const rowDenoms = g>=3 ? DENOMS : DENOMS.slice(2);
+  const coinProb=(q,cents)=>({mode:'coins',q,answer:money(cents),
+    coins:coinBreakdown(cents,rowDenoms), denoms:rowDenoms.map(d=>d.kind)});
   while(probs.length<opt.count && guard++<opt.count*40){
     if(g<=1){   // K-1: count a small handful of coins (no quarters/bills)
       const n=R.int(2,4); const items=[]; let total=0;
@@ -404,12 +418,12 @@ function genCurrency(R, opt){
       if(a===b)continue;                              // skip trivial n − n = 0
       if(b>a){const t=a;a=b;b=t;}                     // keep the difference positive
       const q=`${money(a)} − ${money(b)} =`; if(seen.has(q))continue; seen.add(q);
-      probs.push({mode:'text',q,answer:money(a-b)});
+      probs.push(opt.coinAnswers ? coinProb(q,a-b) : {mode:'text',q,answer:money(a-b)});
     } else {
       const price=R.int(10,g>=4?480:95);const paid=g>=4?500:100;
       const q=`You pay ${money(paid)} for an item that costs ${money(price)}. How much change?`;
       if(seen.has(q))continue; seen.add(q);
-      probs.push({mode:'text',q,answer:money(paid-price)});
+      probs.push(opt.coinAnswers ? coinProb(q,paid-price) : {mode:'text',q,answer:money(paid-price)});
     }
   } return probs;
 }
@@ -607,7 +621,9 @@ function genMixed(R, opt){
     : layout==='shapes'?8 : layout==='factfamily'?3 : layout==='fraction'?4 : 4;
   const sections=chosen.map(t=>{
     const m=TYPE_META[t]; const want=per(m.layout);
-    const subOpt=Object.assign({}, opt, {type:t, count:want});
+    // coinAnswers is stripped: its checkbox is only visible for the US currency
+    // type, and hidden control state must not change mixed-review output
+    const subOpt=Object.assign({}, opt, {type:t, count:want, coinAnswers:false});
     let data=GENERATORS[t](R, subOpt);
     // some generators enforce an internal minimum; cap each section so the
     // combined sheet stays on one page (single-content types are excluded above)

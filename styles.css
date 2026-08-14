@@ -163,6 +163,13 @@ button.primary:hover{background:var(--accent-d)}
 .coin-tray{display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:8px 0; padding:6px;
   border:1px dashed var(--line); border-radius:8px; min-height:60px}
 .coin,.bill{flex:0 0 auto}
+/* "Answer with coin pictures": one cell per denomination, qty write-in box */
+.coin-answer-row{display:flex; flex-wrap:wrap; gap:8px 12px; align-items:center; margin:8px 0}
+.coin-cell{display:inline-flex; align-items:center; gap:4px}
+.coin-x{font-size:12px; color:var(--muted)}
+.coin-qty{display:inline-block; width:30px; height:22px; border:1.5px solid var(--line);
+  border-radius:5px; text-align:center; font-weight:700; line-height:22px}
+.coin-qty .ans{color:var(--accent)}
 
 /* ---------- counting (K-1) ---------- */
 .count-grid{display:grid; gap:10px 12px}
