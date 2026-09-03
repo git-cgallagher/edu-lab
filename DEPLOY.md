@@ -224,6 +224,14 @@ The push to `main` triggers `.github/workflows/ci.yml`:
 > Keep asset references as bare local filenames (`name.css`/`name.js`) so the
 > `sed` in the deploy step can version them.
 
+> **`security.txt` (RFC 9116):** `.well-known/security.txt` is `--exclude`d from
+> the sync and uploaded by its own `aws s3 cp` with `text/plain; charset=utf-8`
+> and `max-age=3600` — it must stay updatable because it carries an `Expires`
+> date (**renew before 2027-08-31**), which a one-year immutable cache would
+> outlive. Verify with `curl -sI` **and** check the body: the path returned a
+> 200 even before the file existed (CloudFront's SPA error mapping serves
+> `index.html`), so status alone is a false pass.
+
 Watch it:
 
 ```bash

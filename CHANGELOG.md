@@ -6,6 +6,16 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 ## [Unreleased]
 
 ### Added
+- **`security.txt` (RFC 9116)** — `.well-known/security.txt` now publishes a
+  security contact for `edulab.appalachiancloud.co`. Before this the path
+  returned CloudFront's SPA fallback (HTTP **200** with `index.html`), so a
+  scanner saw a "success" that was really HTML — a real object is what fixes
+  that. `ci.yml` excludes `.well-known/*` from the immutable `aws s3 sync` and
+  copies the file separately with `text/plain; charset=utf-8` and
+  `max-age=3600`, because the file carries an **`Expires` date that must be
+  refreshed before 2027-08-31** and must not be pinned behind a one-year
+  immutable cache. Estate-wide rollout — see `mountain-infra/AGENTS.md` for the
+  full domain matrix and the shared renewal date.
 - **Contact page (`contact.html` + `contact.js`)** — Turnstile-protected form
   POSTing (urlencoded, no preflight) to the shared Appalachian Cloud contact
   relay in mountain-infra (honeypot + server-side `siteverify` + SES; inbox
