@@ -5,7 +5,7 @@
 # contact below. We aim to acknowledge reports within 5 business days.
 # Please do not run automated scans that degrade service for other users.
 
-Contact: mailto:cgallagher@keengeek.com
+Contact: mailto:soc@appalachiancloud.co
 Expires: 2027-08-31T00:00:00.000Z
 Preferred-Languages: en
 Canonical: https://edulab.appalachiancloud.co/.well-known/security.txt
