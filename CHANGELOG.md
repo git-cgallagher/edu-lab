@@ -5,6 +5,13 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Changed
+- **`security.txt` contact is now `soc@appalachiancloud.co`** (was a personal
+  address). This site is a **subdomain**, so it uses the parent apex's address —
+  `edulab.appalachiancloud.co` has no MX of its own. The address resolves via the
+  Google Workspace catch-all rather than a real mailbox, so it depends on that
+  catch-all staying in place; see the estate-wide note in `mountain-infra/AGENTS.md`.
+
 ### Added
 - **`security.txt` (RFC 9116)** — `.well-known/security.txt` now publishes a
   security contact for `edulab.appalachiancloud.co`. Before this the path
