@@ -142,7 +142,7 @@ See **[DEPLOY.md](DEPLOY.md)** for the full, copy-pasteable runbook:
 1. `terraform apply` the infrastructure (via the `edulab-terraform` aws-vault profile — `mountain-terraform` deliberately cannot create IAM roles)
 2. Add the ACM validation + site CNAME records to Cloudflare (managed as code in `mountain-infra/terraform/cloudflare`)
 3. Set the edu-lab repo **Variables** (`AWS_ACCOUNT_ID`, `S3_BUCKET`, `CLOUDFRONT_ID`, `AWS_REGION`) from `terraform output`
-4. `git push` to `main` — CI deploys automatically via OIDC
+4. Merge a PR into `main` — CI deploys automatically via OIDC (direct pushes to `main` are blocked by the "main protection" ruleset)
 
 ---
 
