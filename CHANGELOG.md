@@ -6,6 +6,14 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 ## [Unreleased]
 
 ### Changed
+- **`main` is protected by the repo ruleset "main protection"** (id `26118885`,
+  2026-10-29). It has no bypass, not even for the owner. Changes land only
+  through a PR, which needs 0 approvals and a passing `Build & Test` check.
+  Force-pushes to `main` and deleting it are blocked. Deploys still run on every
+  merge to `main`. `README.md` and `DEPLOY.md` used to say "`git push` to
+  `main`", which the ruleset now rejects, so they now say to merge a PR. The repo
+  also deletes merged branches now. This brings edu-lab up to the workspace's
+  new-public-repo baseline (`~/Code/AGENTS.md`).
 - **`security.txt` contact is now `soc@appalachiancloud.co`** (was a personal
   address). This site is a **subdomain**, so it uses the parent apex's address —
   `edulab.appalachiancloud.co` has no MX of its own. The address resolves via the
@@ -13,6 +21,10 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/).
   catch-all staying in place; see the estate-wide note in `mountain-infra/AGENTS.md`.
 
 ### Added
+- **`SECURITY.md`** — asks reporters to use GitHub's private advisory form
+  (private vulnerability reporting is now on for this repo), with the site's
+  `security.txt` as the email route. It stays out of the site: the deploy's
+  `*.md` exclude keeps it off S3.
 - **`security.txt` (RFC 9116)** — `.well-known/security.txt` now publishes a
   security contact for `edulab.appalachiancloud.co`. Before this the path
   returned CloudFront's SPA fallback (HTTP **200** with `index.html`), so a

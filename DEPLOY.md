@@ -10,7 +10,8 @@ the Cloudflare dashboard by hand.
 
 > **All commands below run on YOUR machine** — you hold the AWS credentials
 > (via aws-vault) and the GitHub credentials. Nothing here runs in CI except
-> the final deploy, which is triggered by `git push`.
+> the final deploy, which runs on every push to `main` (the first push, then
+> each merged PR).
 
 > **Domain:** `edulab.appalachiancloud.co`. This requires the
 > `appalachiancloud.co` zone to exist in Cloudflare (the other ACE sites use
@@ -200,7 +201,9 @@ These should resolve to:
 
 ---
 
-## Step 4 — Push to main to deploy
+## Step 4 — Land a change on main to deploy
+
+On a **brand-new** repo, the first commit goes straight to `main`:
 
 ```bash
 git init                       # if not already a repo
@@ -211,7 +214,14 @@ git remote add origin git@github.com:git-cgallagher/edu-lab.git   # skip if `gh 
 git push -u origin main
 ```
 
-The push to `main` triggers `.github/workflows/ci.yml`:
+> **After that first push, `main` takes changes only through PRs.** The repo
+> ruleset "main protection" (id `26118885`) rejects direct pushes, force-pushes
+> and deleting `main`. A PR merges with 0 approvals once the `Build & Test` check
+> passes. On the existing repo, deploy by merging a PR. If you rebuild the repo
+> from scratch, make the first push, then recreate the ruleset by following the
+> "New public repo baseline" in `~/Code/AGENTS.md` (required check `Build & Test`).
+
+Every push to `main` (the first push, then each merged PR) triggers `.github/workflows/ci.yml`:
 
 1. **build-test** — `node --check` on every JS file (+ optional `npm test`).
 2. **deploy** — assumes `appalachiancloud-edulab-github-deploy` via OIDC,
